@@ -9,7 +9,7 @@ public class DroneData {
     private int batteryLevelmove;
     private String heading;
     private final Logger logger = LogManager.getLogger();
-    private void dataReader() {
+    public void dataReader() {
         Reader Reader = new Reader();
         heading = Reader.getDirection();
         batteryLevelmove = Reader.getBatteryLevel();

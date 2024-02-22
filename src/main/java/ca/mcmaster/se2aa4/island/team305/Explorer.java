@@ -25,8 +25,18 @@ public class Explorer implements IExplorerRaid {
 
     @Override
     public String takeDecision() {
+        try {
+        Reader readerclass = new Reader();
+        DroneData dataReaderclass = new DroneData();
+        readerclass.fileReader("outputs/Explorer_Island.json"); //not sure how to get the file reader to work //more info next to function
+        dataReaderclass.dataReader();
+        } catch (Exception e) {
+            logger.error("error in reader");
+        }
         JSONObject decision = new JSONObject();
-        decision.put("action", "stop"); // we stop the exploration immediately
+        String[] moves = Decision.move();
+        decision.put(moves[0],moves[1]);
+        //decision.put("echo","E"); // failed try of echo //in the json output file it produces an error
         logger.info("** Decision: {}",decision.toString());
         return decision.toString();
     }
