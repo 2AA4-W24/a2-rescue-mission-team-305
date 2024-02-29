@@ -1,3 +1,4 @@
+
 package ca.mcmaster.se2aa4.island.team305;
 
 public class Battery {
@@ -15,4 +16,3 @@ public class Battery {
     public void action(Integer cost) {
         budget -= cost;
     }
-}
