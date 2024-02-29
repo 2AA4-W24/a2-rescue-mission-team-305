@@ -4,7 +4,7 @@ interface BatteryInter {
     Integer getBatteryLevel();
 }
 public class Battery extends DroneData implements BatteryInter {
-    private int batteryLevel = 7000;
+    private int batteryLevel;
     @Override
     public void batteryAction() {
         batteryLevel -= reader.getMoveCost();
@@ -13,5 +13,6 @@ public class Battery extends DroneData implements BatteryInter {
     public Integer getBatteryLevel(){
         return batteryLevel;
     }
+
 }
 

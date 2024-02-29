@@ -9,7 +9,6 @@ interface ReaderInter{
     void fileReader(String s);
     String actionInfo();
     Integer getMoveCost();
-
 }
 public class Reader implements ReaderInter{
     private final Logger logger = LogManager.getLogger();
@@ -19,7 +18,10 @@ public class Reader implements ReaderInter{
     public void fileReader(String s) {
         JSONObject info = new JSONObject(new JSONTokener(new StringReader(s)));
         moveCost = info.getInt("cost");
-        information = info.getString("extras");
+        try {
+        information = info.getString("extras");}
+        catch (Exception e) { //happens if there are no extras, as the blank value is trying to be converted to a string which throws error
+        }
     }
     @Override
     public String actionInfo(){
@@ -29,5 +31,4 @@ public class Reader implements ReaderInter{
     public Integer getMoveCost(){
         return moveCost;
     }
-
 }

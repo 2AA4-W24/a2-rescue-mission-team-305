@@ -1,9 +1,7 @@
 package ca.mcmaster.se2aa4.island.team305;
-
 import java.io.StringReader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import eu.ace_design.island.bot.IExplorerRaid;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -21,6 +19,9 @@ public class Explorer implements IExplorerRaid {
         Integer batteryLevel = info.getInt("budget");
         logger.info("The drone is facing {}", direction);
         logger.info("Battery level is {}", batteryLevel);
+        initalReaderData initalReader = new initalReader();
+        initalReader.initalBattery(batteryLevel);
+        initalReader.initalHeading(direction);
     }
 
     @Override

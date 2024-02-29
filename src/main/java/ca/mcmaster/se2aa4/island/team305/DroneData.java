@@ -5,7 +5,7 @@ import org.apache.logging.log4j.Logger;
 public class DroneData{
     ReaderInter reader = new Reader();
     private final Logger logger = LogManager.getLogger();
-    private enum Heading {
+    public enum Heading {
         NORTH, SOUTH, EAST, WEST
     }
 
