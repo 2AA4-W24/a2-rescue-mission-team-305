@@ -14,7 +14,7 @@ public class Decision {
 
     public JSONObject decision_copy;
 
-    public void DetermineAct(DroneData data, Scanner scan, Integer decision_count, Integer home_distance) {
+    public void determineAct(DroneData data, Scanner scan, Integer decision_count, Integer home_distance) {
         JSONObject action = new JSONObject();
         switch (decision_count) {
             case 0:

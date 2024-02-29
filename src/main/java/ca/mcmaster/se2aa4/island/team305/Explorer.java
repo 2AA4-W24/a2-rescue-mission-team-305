@@ -31,18 +31,20 @@ public class Explorer implements IExplorerRaid {
         Integer batteryLevel = info.getInt("budget");
         logger.info("The drone is facing {}", direction);
         logger.info("Battery level is {}", batteryLevel);
-        initalReaderData initalReader = new initalReader();
-        initalReader.initalBattery(batteryLevel);
-        initalReader.initalHeading(direction);
         control_center = new Decision();
+        data = new DroneData(direction, batteryLevel);
+        scan = new Scanner();
+        home_distance = 0;
+        decision_number = 0;
     }
 
     @Override
     public String takeDecision() {
-        JSONObject decision = new JSONObject();
-        decision.put("action", "fly");
-        logger.info("** Decision: {}",decision.toString());
-        return decision.toString();
+        control_center.determineAct(data, scan, decision_number, home_distance);
+        JSONObject action = control_center.getDecision();
+        scan_heading = control_center.getLastScan();
+        logger.info("** Decision: {}", action.toString());
+        return action.toString();
     }
 
     @Override
