@@ -1,9 +1,7 @@
 package ca.mcmaster.se2aa4.island.team305;
-
 import java.io.StringReader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import eu.ace_design.island.bot.IExplorerRaid;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -21,22 +19,15 @@ public class Explorer implements IExplorerRaid {
         Integer batteryLevel = info.getInt("budget");
         logger.info("The drone is facing {}", direction);
         logger.info("Battery level is {}", batteryLevel);
+        initalReaderData initalReader = new initalReader();
+        initalReader.initalBattery(batteryLevel);
+        initalReader.initalHeading(direction);
     }
 
     @Override
     public String takeDecision() {
-        try {
-        Reader readerclass = new Reader();
-        DroneData dataReaderclass = new DroneData();
-        readerclass.fileReader("outputs/Explorer_Island.json"); //not sure how to get the file reader to work //more info next to function
-        dataReaderclass.dataReader();
-        } catch (Exception e) {
-            logger.error("error in reader");
-        }
         JSONObject decision = new JSONObject();
-        String[] moves = Decision.move();
-        decision.put(moves[0],moves[1]);
-        //decision.put("echo","E"); // failed try of echo //in the json output file it produces an error
+        decision.put("action", "fly");
         logger.info("** Decision: {}",decision.toString());
         return decision.toString();
     }
@@ -44,6 +35,8 @@ public class Explorer implements IExplorerRaid {
     @Override
     public void acknowledgeResults(String s) {
         JSONObject response = new JSONObject(new JSONTokener(new StringReader(s)));
+        ReaderInter readerclass = new Reader();
+        readerclass.fileReader(s);
         logger.info("** Response received:\n"+response.toString(2));
         Integer cost = response.getInt("cost");
         logger.info("The cost of the action was {}", cost);

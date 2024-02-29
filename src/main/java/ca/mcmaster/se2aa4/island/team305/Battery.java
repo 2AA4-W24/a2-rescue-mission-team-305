@@ -1,18 +1,18 @@
-
 package ca.mcmaster.se2aa4.island.team305;
-
-public class Battery {
-
-    private Integer budget;
-
-    public Battery(Integer b) {
-        budget = b;
+interface BatteryInter {
+    void batteryAction();
+    Integer getBatteryLevel();
+}
+public class Battery extends DroneData implements BatteryInter {
+    private int batteryLevel;
+    @Override
+    public void batteryAction() {
+        batteryLevel -= reader.getMoveCost();
+    }
+    @Override
+    public Integer getBatteryLevel(){
+        return batteryLevel;
     }
 
-    public Battery getBattery() {
-        return new Battery(budget);
-    }
+}
 
-    public void action(Integer cost) {
-        budget -= cost;
-    }
