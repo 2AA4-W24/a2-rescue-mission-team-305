@@ -11,5 +11,14 @@ public class DroneData{
         NORTH, SOUTH, EAST, WEST
     }
 
+    public void batteryAction(Integer cost) {
+        battery -= cost;
+    }
+
+    public Integer getBattery() {
+        Integer copy = battery;
+        return copy;
+    }
+
 
 }

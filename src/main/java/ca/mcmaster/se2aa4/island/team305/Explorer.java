@@ -18,8 +18,6 @@ public class Explorer implements IExplorerRaid {
 
     private Scanner scan;
 
-    private Battery costs;
-
     private Integer home_distance;
 
     private String scan_heading;
@@ -36,6 +34,7 @@ public class Explorer implements IExplorerRaid {
         initalReaderData initalReader = new initalReader();
         initalReader.initalBattery(batteryLevel);
         initalReader.initalHeading(direction);
+        control_center = new Decision();
     }
 
     @Override
