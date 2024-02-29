@@ -5,24 +5,29 @@ import eu.ace_design.island.bot.IExplorerRaid;
 import java.io.StringReader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+interface ReaderInter{
+    void fileReader(String s);
+    String actionInfo();
+    Integer getMoveCost();
 
-public class Reader {
-    private String heading;
-    private Integer batteryLevel;
+}
+public class Reader implements ReaderInter{
     private final Logger logger = LogManager.getLogger();
-
-    public void fileReader(String s) { //this doesn't work
-        JSONObject info = new JSONObject(new JSONTokener(new StringReader(s))); //this line is broken
-        //IDK how to get the exploro island json file to be read mid run as right now it auto crashing on this line every time
-        //Thats why the try and accept block is in explorer take desision
-        heading = info.getString("heading");
-        batteryLevel = info.getInt("budget");
+    private String information;
+    private Integer moveCost;
+    @Override
+    public void fileReader(String s) {
+        JSONObject info = new JSONObject(new JSONTokener(new StringReader(s)));
+        moveCost = info.getInt("cost");
+        information = info.getString("extras");
     }
-    public String getDirection(){
-        return heading;
+    @Override
+    public String actionInfo(){
+        return information;
     }
-    public Integer getBatteryLevel(){
-        return batteryLevel;
+    @Override
+    public Integer getMoveCost(){
+        return moveCost;
     }
 
 }
