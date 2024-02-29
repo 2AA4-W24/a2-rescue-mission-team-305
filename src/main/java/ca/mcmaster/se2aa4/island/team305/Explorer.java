@@ -10,6 +10,20 @@ public class Explorer implements IExplorerRaid {
 
     private final Logger logger = LogManager.getLogger();
 
+    private Integer decision_number;
+
+    private Decision control_center;
+
+    private DroneData data;
+
+    private Scanner scan;
+
+    private Battery costs;
+
+    private Integer home_distance;
+
+    private String scan_heading;
+
     @Override
     public void initialize(String s) {
         logger.info("** Initializing the Exploration Command Center");
