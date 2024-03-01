@@ -61,7 +61,9 @@ public class Explorer implements IExplorerRaid {
         logger.info("The status of the drone is {}", status);
         JSONObject extraInfo = response.getJSONObject("extras");
         logger.info("Additional information received: {}", extraInfo);
-        logger.info("E delta = {}", readerclass.getRange("E"));
+        Scanner scanner = new Scanner();
+        scanner.processBiomes(extraInfo);
+        logger.info("E delta = {}", readerclass.getRange("E")); //why is this here
     }
 
     @Override
