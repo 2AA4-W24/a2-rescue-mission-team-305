@@ -14,8 +14,9 @@ public class Decision {
 
     public JSONObject decision_copy;
 
-    public void determineAct(DroneData data, Scanner scan, Integer decision_count, Integer home_distance) {
+    public void determineAct(DroneData data, Reader scan, Integer decision_count, Integer home_distance) {
         JSONObject action = new JSONObject();
+        radio_decision = false;
         switch (decision_count) {
             case 0:
                 action.put("action", "echo");
@@ -38,7 +39,6 @@ public class Decision {
             case 3:
                 action.put("action", "stop");
                 scan_heading = null;
-                radio_decision = false;
                 break;
 
         }
