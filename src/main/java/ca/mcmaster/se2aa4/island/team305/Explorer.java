@@ -10,6 +10,18 @@ public class Explorer implements IExplorerRaid {
 
     private final Logger logger = LogManager.getLogger();
 
+    private Integer decision_number;
+
+    private Decision control_center;
+
+    private DroneData data;
+
+    private Integer home_distance;
+
+    private String scan_heading;
+
+    private Reader readerclass;
+
     @Override
     public void initialize(String s) {
         logger.info("** Initializing the Exploration Command Center");
@@ -19,24 +31,29 @@ public class Explorer implements IExplorerRaid {
         Integer batteryLevel = info.getInt("budget");
         logger.info("The drone is facing {}", direction);
         logger.info("Battery level is {}", batteryLevel);
-        initalReaderData initalReader = new initalReader();
-        initalReader.initalBattery(batteryLevel);
-        initalReader.initalHeading(direction);
+        control_center = new Decision();
+        data = new DroneData(direction, batteryLevel);
+        readerclass = new Reader();
+        home_distance = 0;
+        decision_number = 0;
     }
 
     @Override
     public String takeDecision() {
-        JSONObject decision = new JSONObject();
-        decision.put("action", "fly");
-        logger.info("** Decision: {}",decision.toString());
-        return decision.toString();
+        control_center.determineAct(data, readerclass, decision_number, home_distance);
+        JSONObject action = control_center.getDecision();
+        if (control_center.didScan()) {
+            scan_heading = control_center.getLastScan();
+        }
+        logger.info("** Decision: {}", action.toString());
+        decision_number += 1;
+        return action.toString();
     }
 
     @Override
     public void acknowledgeResults(String s) {
         JSONObject response = new JSONObject(new JSONTokener(new StringReader(s)));
-        ReaderInter readerclass = new Reader();
-        readerclass.fileReader(s);
+        readerclass.fileReader(response, control_center.didScan(), scan_heading, data);
         logger.info("** Response received:\n"+response.toString(2));
         Integer cost = response.getInt("cost");
         logger.info("The cost of the action was {}", cost);
@@ -44,6 +61,7 @@ public class Explorer implements IExplorerRaid {
         logger.info("The status of the drone is {}", status);
         JSONObject extraInfo = response.getJSONObject("extras");
         logger.info("Additional information received: {}", extraInfo);
+        logger.info("E delta = {}", readerclass.getRange("E"));
     }
 
     @Override
