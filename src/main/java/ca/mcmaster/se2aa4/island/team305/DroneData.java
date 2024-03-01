@@ -30,6 +30,7 @@ public class DroneData {
                 break;
 
         }
+        battery = initial_budget;
     }
 
     public void batteryAction(Integer cost) {

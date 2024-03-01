@@ -25,6 +25,7 @@ public class Reader implements ReaderInter{
     @Override
     public void fileReader(JSONObject info, Boolean scan_status, String heading, DroneData data) {
         logger.info("file reader called");
+        logger.info(info.toString());
         moveCost = info.getInt("cost");
         data.batteryAction(moveCost);
         logger.info("cost checked.");
