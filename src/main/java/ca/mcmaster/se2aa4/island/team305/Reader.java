@@ -1,7 +1,12 @@
 package ca.mcmaster.se2aa4.island.team305;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.List;
+
 interface ReaderInter{
     void fileReader(JSONObject info, Boolean scan_status, String heading, DroneData data);
     String actionInfo();
@@ -71,5 +76,46 @@ public class Reader implements ReaderInter{
                 return 0;
             }
         }
+    }
+    private List<String> biomes;
+    private List<String> creeks;
+    private List<String> sites;
+    private void setBiomes(List<String> biomes){
+        this.biomes = biomes;
+    }
+    private void clearBiomes(){ //to be used to clear biome memory of each space
+        biomes.clear();
+    }
+    private void setCreeks(List<String> creeks){
+        this.creeks = creeks;
+    }
+    private void setSites(List<String> sites){
+        this.sites = sites;
+    }
+    public List<String> getBiomes(){
+        return biomes;
+    }
+    public List<String> getCreeks(){
+        return creeks;
+    }
+    public List<String> getSites(){
+        return sites;
+    }
+
+    public void processBiomes(JSONObject extras) {
+        clearBiomes();//so we only have biomes of our current space
+        JSONArray biomesInfo = extras.getJSONArray("biomes");
+        setBiomes(jsonArrayConvert(biomesInfo));
+        JSONArray creeksInfo = extras.getJSONArray("creeks");
+        setCreeks(jsonArrayConvert(creeksInfo));
+        JSONArray sitesInfo = extras.getJSONArray("sites");
+        setSites(jsonArrayConvert(sitesInfo));
+    }
+    private List<String> jsonArrayConvert(JSONArray jsonArray){
+        List<String> list = new ArrayList<>();
+        for (Object value : jsonArray){
+            list.add(String.valueOf(value));
+        }
+        return list;
     }
 }
