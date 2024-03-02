@@ -25,20 +25,19 @@ public class Reader implements ReaderInter{
 
     private Integer range_E;
 
-    private String biome;
+    private List<String> biomes;
+
+    private List<String> creeks;
+
+    private List<String> sites;
 
     @Override
     public void fileReader(JSONObject info, Boolean scan_status, String heading, DroneData data) {
-        logger.info("file reader called");
-        logger.info(info.toString());
         moveCost = info.getInt("cost");
         data.batteryAction(moveCost);
-        logger.info("cost checked.");
         if (scan_status) {
             JSONObject extra_data = info.getJSONObject("extras");
-            logger.info("JSONObject created.");
             information = extra_data.getString("found");
-            logger.info("extrainfo saved");
             switch (heading) {
                 case "N" -> range_N = extra_data.getInt("range");
                 case "W" -> range_W = extra_data.getInt("range");
@@ -50,8 +49,7 @@ public class Reader implements ReaderInter{
     }
     @Override
     public String actionInfo() {
-        String info_copy = information;
-        return info_copy;
+        return information;
     }
     @Override
     public Integer getMoveCost(){
@@ -77,21 +75,6 @@ public class Reader implements ReaderInter{
             }
         }
     }
-    private List<String> biomes;
-    private List<String> creeks;
-    private List<String> sites;
-    private void setBiomes(List<String> biomes){
-        this.biomes = biomes;
-    }
-    private void clearBiomes(){ //to be used to clear biome memory of each space
-        biomes.clear();
-    }
-    private void setCreeks(List<String> creeks){
-        this.creeks = creeks;
-    }
-    private void setSites(List<String> sites){
-        this.sites = sites;
-    }
     public List<String> getBiomes(){
         return biomes;
     }
@@ -103,13 +86,15 @@ public class Reader implements ReaderInter{
     }
 
     public void processBiomes(JSONObject extras) {
-        clearBiomes();//so we only have biomes of our current space
+        if (biomes != null) {
+            biomes.clear(); //so we only have biomes of our current space
+        }
         JSONArray biomesInfo = extras.getJSONArray("biomes");
-        setBiomes(jsonArrayConvert(biomesInfo));
+        biomes = jsonArrayConvert(biomesInfo);
         JSONArray creeksInfo = extras.getJSONArray("creeks");
-        setCreeks(jsonArrayConvert(creeksInfo));
+        creeks = jsonArrayConvert(creeksInfo);
         JSONArray sitesInfo = extras.getJSONArray("sites");
-        setSites(jsonArrayConvert(sitesInfo));
+        sites = jsonArrayConvert(sitesInfo);
     }
     private List<String> jsonArrayConvert(JSONArray jsonArray){
         List<String> list = new ArrayList<>();

@@ -10,37 +10,40 @@ public class Decision {
 
     private Boolean radio_decision;
 
+    private Boolean biome_check;
+
     public String scan_copy;
 
     public JSONObject decision_copy;
 
+    private Integer end_range;
+
     public void determineAct(DroneData data, Reader scan, Integer decision_count, Integer home_distance) {
         JSONObject action = new JSONObject();
         radio_decision = false;
-        switch (decision_count) {
-            case 0:
+        biome_check = false;
+        if (decision_count == 0) {
+            action.put("action", "echo");
+            action.put("parameters", new JSONObject().put("direction", "E"));
+            radio_decision = true;
+            scan_heading = "E";
+        }
+        else {
+            if (decision_count == 1) {
+                end_range = scan.getRange("E");
+            }
+            if (decision_count == end_range + 1) {
                 action.put("action", "echo");
-                action.put("parameters", (new JSONObject()).put("direction", "E"));
+                action.put("parameters", new JSONObject().put("direction", "E"));
+                radio_decision = true;
                 scan_heading = "E";
-                radio_decision = true;
-                break;
-            case 1:
-                action.put("action", "echo");
-                action.put("parameters", (new JSONObject()).put("direction", "N"));
-                scan_heading = "N";
-                radio_decision = true;
-                break;
-            case 2:
-                action.put("action", "echo");
-                action.put("parameters", (new JSONObject()).put("direction", "S"));
-                scan_heading = "S";
-                radio_decision = true;
-                break;
-            case 3:
-                action.put("action", "stop");
-                scan_heading = null;
-                break;
-
+            }
+            else if (decision_count <= end_range) {
+                action.put("action", "fly");
+            }
+            else if (decision_count > end_range + 1) {
+                action.put("action","stop");
+            }
         }
         next_decision = action;
     }
@@ -58,5 +61,9 @@ public class Decision {
     public Boolean didScan() {
         Boolean choice_copy = radio_decision;
         return choice_copy;
+    }
+
+    public Boolean checkBiome() {
+        return biome_check;
     }
 }
