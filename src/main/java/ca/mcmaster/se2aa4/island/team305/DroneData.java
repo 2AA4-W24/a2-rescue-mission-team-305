@@ -3,7 +3,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class DroneData {
-    ReaderInter reader = new Reader();
     private final Logger logger = LogManager.getLogger();
 
     public enum Heading {
@@ -40,6 +39,10 @@ public class DroneData {
     public Integer getBattery() {
         Integer copy = battery;
         return copy;
+    }
+
+    public Heading getHeading() {
+        return direction;
     }
 
 

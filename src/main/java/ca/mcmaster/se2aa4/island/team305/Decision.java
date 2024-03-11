@@ -2,6 +2,9 @@ package ca.mcmaster.se2aa4.island.team305;
 
 import org.json.JSONObject;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 public class Decision {
 
     private JSONObject next_decision;
@@ -16,15 +19,15 @@ public class Decision {
 
     public JSONObject decision_copy;
 
+    private Queue<JSONObject> action_queue = new LinkedList<>();
+
     private Integer end_range;
 
-    public void determineAct(DroneData data, Reader scan, Integer decision_count, Integer home_distance) {
-        JSONObject action = new JSONObject();
+    public void determineAct(DroneData data, Reader scan, Integer decision_count) {
         radio_decision = false;
         biome_check = false;
         if (decision_count == 0) {
-            action.put("action", "echo");
-            action.put("parameters", new JSONObject().put("direction", "E"));
+            radio("E");
             radio_decision = true;
             scan_heading = "E";
         }
@@ -33,19 +36,18 @@ public class Decision {
                 end_range = scan.getRange("E");
             }
             if (decision_count == end_range + 1) {
-                action.put("action", "echo");
-                action.put("parameters", new JSONObject().put("direction", "E"));
+                radio("E");
                 radio_decision = true;
                 scan_heading = "E";
             }
             else if (decision_count <= end_range) {
-                action.put("action", "fly");
+                move_f();
             }
             else if (decision_count > end_range + 1) {
-                action.put("action","stop");
+                stop();
             }
         }
-        next_decision = action;
+        next_decision = action_queue.remove();
     }
 
     public JSONObject getDecision() {
@@ -65,5 +67,24 @@ public class Decision {
 
     public Boolean checkBiome() {
         return biome_check;
+    }
+
+    private void move_f() {
+        JSONObject move = new JSONObject();
+        move.put("action", "fly");
+        action_queue.add(move);
+    }
+
+    private void stop() {
+        JSONObject move = new JSONObject();
+        move.put("action", "stop");
+        action_queue.add(move);
+    }
+
+    private void radio(String heading) {
+        JSONObject move = new JSONObject();
+        move.put("action", "echo");
+        move.put("parameters", new JSONObject().put("direction", heading));
+        action_queue.add(move);
     }
 }

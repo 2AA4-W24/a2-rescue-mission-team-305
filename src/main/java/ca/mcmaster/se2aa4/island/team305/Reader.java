@@ -45,7 +45,6 @@ public class Reader implements ReaderInter{
                 case "E" -> range_E = extra_data.getInt("range");
             }
         }
-
     }
     @Override
     public String actionInfo() {

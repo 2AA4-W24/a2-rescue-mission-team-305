@@ -16,8 +16,6 @@ public class Explorer implements IExplorerRaid {
 
     private DroneData data;
 
-    private Integer home_distance;
-
     private String scan_heading;
 
     private Reader readerclass;
@@ -34,13 +32,12 @@ public class Explorer implements IExplorerRaid {
         control_center = new Decision();
         data = new DroneData(direction, batteryLevel);
         readerclass = new Reader();
-        home_distance = 0;
         decision_number = 0;
     }
 
     @Override
     public String takeDecision() {
-        control_center.determineAct(data, readerclass, decision_number, home_distance);
+        control_center.determineAct(data, readerclass, decision_number);
         JSONObject action = control_center.getDecision();
         if (control_center.didScan()) {
             scan_heading = control_center.getLastScan();
@@ -61,6 +58,7 @@ public class Explorer implements IExplorerRaid {
         logger.info("The status of the drone is {}", status);
         JSONObject extraInfo = response.getJSONObject("extras");
         logger.info("Additional information received: {}", extraInfo);
+        logger.info("Battery left: {}", data.getBattery());
         if (control_center.checkBiome()) {
             readerclass.processBiomes(extraInfo);
         }
