@@ -70,7 +70,7 @@ public class Reader implements ReaderInter{
                 return range_E;
             }
             default -> {
-                return 0;
+                return 0; //Should throw error if input is not expected!
             }
         }
     }

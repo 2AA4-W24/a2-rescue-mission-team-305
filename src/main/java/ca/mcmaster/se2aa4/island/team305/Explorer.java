@@ -5,12 +5,11 @@ import org.apache.logging.log4j.Logger;
 import eu.ace_design.island.bot.IExplorerRaid;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import ca.mcmaster.se2aa4.island.team305.Decision.Phase;
 
 public class Explorer implements IExplorerRaid {
 
     private final Logger logger = LogManager.getLogger();
-
-    private Integer decision_number;
 
     private Decision control_center;
 
@@ -29,21 +28,19 @@ public class Explorer implements IExplorerRaid {
         Integer batteryLevel = info.getInt("budget");
         logger.info("The drone is facing {}", direction);
         logger.info("Battery level is {}", batteryLevel);
-        control_center = new Decision();
+        control_center = new Decision(Phase.FIRST);
         data = new DroneData(direction, batteryLevel);
         readerclass = new Reader();
-        decision_number = 0;
     }
 
     @Override
     public String takeDecision() {
-        control_center.determineAct(data, readerclass, decision_number);
+        control_center.determineAct(data, readerclass);
         JSONObject action = control_center.getDecision();
         if (control_center.didScan()) {
             scan_heading = control_center.getLastScan();
         }
         logger.info("** Decision: {}", action.toString());
-        decision_number += 1;
         return action.toString();
     }
 
