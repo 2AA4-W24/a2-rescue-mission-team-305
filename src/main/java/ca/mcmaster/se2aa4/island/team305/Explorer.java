@@ -18,19 +18,23 @@ public class Explorer implements IExplorerRaid {
     private String scan_heading;
 
     private Reader readerclass;
-
+    private Cords droneCords;
+    private String direction;
+    private DroneData.Heading heading;
     @Override
     public void initialize(String s) {
         logger.info("** Initializing the Exploration Command Center");
         JSONObject info = new JSONObject(new JSONTokener(new StringReader(s)));
         logger.info("** Initialization info:\n {}",info.toString(2));
-        String direction = info.getString("heading");
+        direction = info.getString("heading");
         Integer batteryLevel = info.getInt("budget");
         logger.info("The drone is facing {}", direction);
         logger.info("Battery level is {}", batteryLevel);
         control_center = new Decision(Phase.FIRST);
         data = new DroneData(direction, batteryLevel);
         readerclass = new Reader();
+        droneCords = new Cords();
+        droneCords.droneCordsStart();
     }
 
     @Override
@@ -40,6 +44,8 @@ public class Explorer implements IExplorerRaid {
         if (control_center.didScan()) {
             scan_heading = control_center.getLastScan();
         }
+        logger.info(direction);
+        droneCords.droneCordsMove(action,direction);
         logger.info("** Decision: {}", action.toString());
         return action.toString();
     }
