@@ -7,8 +7,6 @@ public class Cords {
     private final Logger logger = LogManager.getLogger();
     private Integer NorthSouth;
     private Integer EastWest;
-    private DroneData droneData;
-    private String CurrentDirection;
 
     public void droneCordsStart(){ //using cartesian coordinates system (Tech debt as easy to do)
         NorthSouth = 0;

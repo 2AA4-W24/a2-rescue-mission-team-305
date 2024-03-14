@@ -33,6 +33,7 @@ public class Explorer implements IExplorerRaid {
         control_center = new Decision(Phase.FIRST);
         data = new DroneData(direction, batteryLevel);
         readerclass = new Reader();
+        readerclass.sitesCordsStart();
         droneCords = new Cords();
         droneCords.droneCordsStart();
     }
@@ -62,11 +63,10 @@ public class Explorer implements IExplorerRaid {
         JSONObject extraInfo = response.getJSONObject("extras");
         logger.info("Additional information received: {}", extraInfo);
         logger.info("Battery left: {}", data.getBattery());
-        if (control_center.checkBiome()) {
+        if (control_center.checkBiome()) {//always false rn
             readerclass.processBiomes(extraInfo);
         }
     }
-
     @Override
     public String deliverFinalReport() {
         return "no creek found";
