@@ -1,9 +1,13 @@
 package ca.mcmaster.se2aa4.island.team305;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONObject;
 
 public class DroneData {
     private final Logger logger = LogManager.getLogger();
+
+    public DroneData() {
+    }
 
     public enum Heading {
         NORTH, SOUTH, EAST, WEST
@@ -17,15 +21,20 @@ public class DroneData {
         switch (heading) {
             case "N":
                 direction = Heading.NORTH;
+                logger.info("DRONEDATA N");
                 break;
             case "W":
                 direction = Heading.WEST;
+                logger.info("DRONEDATA W");
                 break;
             case "S":
                 direction = Heading.SOUTH;
+                logger.info("DRONEDATA S");
                 break;
             case "E":
                 direction = Heading.EAST;
+                logger.info("DRONEDATA E");
+                logger.info(direction);
                 break;
 
         }
@@ -51,44 +60,36 @@ public class DroneData {
             case NORTH -> {
                 if (side.equals("L")) {
                     return "W";
-                }
-                else if (side.equals("B")) {
+                } else if (side.equals("B")) {
                     return "S";
-                }
-                else {
+                } else {
                     return "E";
                 }
             }
             case WEST -> {
                 if (side.equals("L")) {
                     return "S";
-                }
-                else if (side.equals("B")) {
+                } else if (side.equals("B")) {
                     return "E";
-                }
-                else {
+                } else {
                     return "N";
                 }
             }
             case SOUTH -> {
                 if (side.equals("L")) {
                     return "E";
-                }
-                else if (side.equals("B")) {
+                } else if (side.equals("B")) {
                     return "N";
-                }
-                else {
+                } else {
                     return "W";
                 }
             }
             case EAST -> {
                 if (side.equals("L")) {
                     return "N";
-                }
-                else if (side.equals("B")) {
+                } else if (side.equals("B")) {
                     return "W";
-                }
-                else {
+                } else {
                     return "S";
                 }
             }
