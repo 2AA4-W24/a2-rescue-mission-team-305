@@ -16,7 +16,7 @@ public class Decision {
 
     private Boolean radio_decision;
 
-    private Boolean biome_check;
+    private Boolean biome_check; //always false rn
 
     private Queue<JSONObject> action_queue = new LinkedList<>();
 
@@ -35,7 +35,7 @@ public class Decision {
 
     public void determineAct(DroneData data, Reader scan) {
         radio_decision = false;
-        biome_check = false;
+        biome_check = false; // this is always false rn so you never check the current biome
         if (scan.actionInfo() != null) {
             if (scan.actionInfo().equals("GROUND")) {
                 logger.info("Island Found!!");
