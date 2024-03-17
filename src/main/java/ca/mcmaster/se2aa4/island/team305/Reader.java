@@ -140,4 +140,7 @@ public class Reader implements ReaderInter{
         int[] cords = creekStorage.get(id);
         return cords;
     }
+    public String GetCreek0ID(){
+        return creeks.get(0);
+    }
 }
