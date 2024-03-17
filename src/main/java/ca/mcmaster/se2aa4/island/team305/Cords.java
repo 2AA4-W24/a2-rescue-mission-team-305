@@ -7,14 +7,15 @@ public class Cords {
     private final Logger logger = LogManager.getLogger();
     private Integer NorthSouth;
     private Integer EastWest;
+    private Reader readerclass;
 
     public void droneCordsStart(){ //using cartesian coordinates system (Tech debt as easy to do)
         NorthSouth = 0;
         EastWest = 0;
     }
 
-    public void droneCordsMove(JSONObject action,String currDirection){
-        if (action.getString("action").equals("fly")) {
+    public void droneCordsMove(JSONObject move,String currDirection,JSONObject lastmove) {
+        if (move.getString("action").equals("fly")) {
             switch (currDirection) {
                 case "N": {
                     NorthSouth += 1;
@@ -38,6 +39,37 @@ public class Cords {
                 }
                 default: {
                     logger.info("ERROR in drone cords move");
+                }
+            }
+        }
+        if (lastmove.getString("action").equals("heading") && lastmove == move) { // i cooked here so it may be burnt and a bit broken
+            JSONObject direction = move.getJSONObject("parameters"); //if some error with heading or cords check here first
+            String headingChange = direction.getString("direction");
+            if (headingChange.equals("N") || headingChange.equals("S") || headingChange.equals("E") || headingChange.equals("W")) {
+                switch (currDirection + "-" + headingChange) {
+                    case "N-W", "W-N": {
+                        EastWest -= 1;
+                        NorthSouth += 1;
+                        break;
+                    }
+                    case "N-E", "E-N": {
+                        EastWest += 1;
+                        NorthSouth += 1;
+                        break;
+                    }
+                    case "S-W", "W-S": {
+                        EastWest -= 1;
+                        NorthSouth -= 1;
+                        break;
+                    }
+                    case "S-E", "E-S": {
+                        EastWest += 1;
+                        NorthSouth -= 1;
+                        break;
+                    }
+                    default: {
+                        logger.info("ERROR in drone cords HEADING move");
+                    }
                 }
             }
         }
