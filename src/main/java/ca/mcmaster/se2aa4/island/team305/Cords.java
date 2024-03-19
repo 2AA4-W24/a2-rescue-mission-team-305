@@ -9,12 +9,12 @@ public class Cords {
     private Integer EastWest;
     private Reader readerclass;
 
-    public void droneCordsStart(){ //using cartesian coordinates system (Tech debt as easy to do)
+    public void droneCordsStart() { //using cartesian coordinates system (Tech debt as easy to do)
         NorthSouth = 0;
         EastWest = 0;
     }
 
-    public void droneCordsMove(JSONObject move,String currDirection,JSONObject lastmove) {
+    public void droneCordsMove(JSONObject move, String currDirection, JSONObject lastmove) {
         if (move.getString("action").equals("fly")) {
             switch (currDirection) {
                 case "N": {
@@ -77,13 +77,44 @@ public class Cords {
         }
     }
 
-    public Integer GetNorthSouthCord(){
+    public Integer GetNorthSouthCord() {
         int cord = NorthSouth;
         return cord;
     }
-    public Integer GetEastWestCord(){
+
+    public Integer GetEastWestCord() {
         int cord = EastWest;
         return cord;
     }
-
+    private String closestCreek;
+    public String ClosestCreekCalculation() {
+        double closestResult = 999999999.0; //to ensure first run of code overwrites this number
+        try {
+            closestCreek = readerclass.getCreek0ID();
+        } catch (Exception e) {
+            closestCreek = null;
+        }
+        String currentcreek;
+        double result;
+        for (int i = 0; i <= readerclass.creekCounter; i++){
+            currentcreek = readerclass.getCreekXID(i);
+            int[] currentcords = readerclass.getCreekCord(currentcreek);
+            result = distanceCalculation(currentcords);
+            if (result < closestResult) {
+                closestResult = result;
+                closestCreek = currentcreek;
+            }
+        }
+        return closestCreek;
+    }
+    private double distanceCalculation(int[] currentcords) {
+        int x = Math.abs(currentcords[0]);
+        int y = Math.abs(currentcords[1]);
+        return Math.sqrt(x*x+y*y);
+    }
 }
+
+
+
+
+

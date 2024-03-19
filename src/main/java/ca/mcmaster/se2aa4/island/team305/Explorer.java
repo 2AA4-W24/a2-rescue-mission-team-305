@@ -72,16 +72,12 @@ public class Explorer implements IExplorerRaid {
     @Override
     public String deliverFinalReport() {
         String creek;
-        try {
-            creek = readerclass.GetCreek0ID();
-        } catch (Exception e) {
-            creek = null;
-        }
+        droneCords = new Cords();
+        creek = droneCords.ClosestCreekCalculation();
         if (creek != null) {
             logger.info("Creek found");
             return creek;
         }
         return "no creek found";
     }
-
 }
