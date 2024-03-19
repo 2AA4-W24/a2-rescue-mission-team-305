@@ -38,8 +38,8 @@ public class Cords {
                 }
             }
         }
-        else if (action.getString("action").equals("heading")) {
-            String new_heading = action.getJSONObject("parameters").getString("direction");
+        else if (move.getString("action").equals("heading")) {
+            String new_heading = move.getJSONObject("parameters").getString("direction");
             switch (currDirection) {
                 case "N": {
                     if (new_heading.equals("W")) {
