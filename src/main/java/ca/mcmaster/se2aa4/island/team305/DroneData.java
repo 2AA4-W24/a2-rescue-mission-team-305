@@ -6,9 +6,6 @@ import org.json.JSONObject;
 public class DroneData {
     private final Logger logger = LogManager.getLogger();
 
-    public DroneData() {
-    }
-
     public enum Heading {
         NORTH, SOUTH, EAST, WEST
     }

@@ -46,7 +46,6 @@ public class Explorer implements IExplorerRaid {
        if (control_center.didScan()) {
            scan_heading = control_center.getLastScan();
        }
-       logger.info(direction);
        droneCords.droneCordsMove(action,direction,lastaction);
        logger.info("** Decision: {}", action.toString());
        lastaction = action;
