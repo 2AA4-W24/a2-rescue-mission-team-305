@@ -18,22 +18,16 @@ public class DroneData {
         switch (heading) {
             case "N":
                 direction = Heading.NORTH;
-                logger.info("DRONEDATA N");
                 break;
             case "W":
                 direction = Heading.WEST;
-                logger.info("DRONEDATA W");
                 break;
             case "S":
                 direction = Heading.SOUTH;
-                logger.info("DRONEDATA S");
                 break;
             case "E":
                 direction = Heading.EAST;
-                logger.info("DRONEDATA E");
-                logger.info(direction);
                 break;
-
         }
         battery = initial_budget;
     }
@@ -46,8 +40,21 @@ public class DroneData {
         return battery;
     }
 
-    public void turn(Heading h) {
-        direction = h;
+    public void turn(String new_heading) {
+        switch (new_heading) {
+            case "N":
+                direction = Heading.NORTH;
+                break;
+            case "W":
+                direction = Heading.WEST;
+                break;
+            case "S":
+                direction = Heading.SOUTH;
+                break;
+            case "E":
+                direction = Heading.EAST;
+                break;
+        }
     }
 
     public String checkSide(String side) {

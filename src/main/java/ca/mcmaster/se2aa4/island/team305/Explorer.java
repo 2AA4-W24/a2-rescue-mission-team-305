@@ -41,15 +41,15 @@ public class Explorer implements IExplorerRaid {
 
     @Override
     public String takeDecision() {
-       control_center.determineAct(data, readerclass);
-       JSONObject action = control_center.getDecision();
-       if (control_center.didScan()) {
-           scan_heading = control_center.getLastScan();
-       }
-       droneCords.droneCordsMove(action,direction,lastaction);
-       logger.info("** Decision: {}", action.toString());
-       lastaction = action;
-       return action.toString();
+        control_center.determineAct(data, readerclass);
+        JSONObject action = control_center.getDecision();
+        if (control_center.didScan()) {
+            scan_heading = control_center.getLastScan();
+        }
+        droneCords.droneCordsMove(action,direction,lastaction);
+        logger.info("** Decision: {}", action.toString());
+        lastaction = action;
+        return action.toString();
     }
 
     @Override
