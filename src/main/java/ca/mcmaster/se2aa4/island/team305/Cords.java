@@ -120,12 +120,12 @@ public class Cords {
             }
         }
     }
-    public Integer GetNorthSouthCord() {
+    public Integer getNorthSouthCord() {
         int cord = NorthSouth;
         return cord;
     }
 
-    public Integer GetEastWestCord() {
+    public Integer getEastWestCord() {
         int cord = EastWest;
         return cord;
     }
