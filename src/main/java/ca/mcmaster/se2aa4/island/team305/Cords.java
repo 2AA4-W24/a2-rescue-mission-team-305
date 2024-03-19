@@ -18,22 +18,66 @@ public class Cords {
             switch (currDirection) {
                 case "N": {
                     NorthSouth += 1;
-                    logger.info("NORTH");
                     break;
                 }
                 case "S": {
                     NorthSouth -= 1;
-                    logger.info("SOUTH");
                     break;
                 }
                 case "E": {
                     EastWest += 1;
-                    logger.info("EAST");
                     break;
                 }
                 case "W": {
                     EastWest -= 1;
-                    logger.info("WEST");
+                    break;
+                }
+                default: {
+                    logger.info("ERROR in drone cords move");
+                }
+            }
+        }
+        else if (action.getString("action").equals("heading")) {
+            String new_heading = action.getJSONObject("parameters").getString("direction");
+            switch (currDirection) {
+                case "N": {
+                    if (new_heading.equals("W")) {
+                        EastWest -= 1;
+                    }
+                    else if (new_heading.equals("E")) {
+                        EastWest += 1;
+                    }
+                    NorthSouth += 1;
+                    break;
+                }
+                case "S": {
+                    if (new_heading.equals("W")) {
+                        EastWest -= 1;
+                    }
+                    else if (new_heading.equals("E")) {
+                        EastWest += 1;
+                    }
+                    NorthSouth -= 1;
+                    break;
+                }
+                case "E": {
+                    if (new_heading.equals("S")) {
+                        NorthSouth -= 1;
+                    }
+                    else if (new_heading.equals("N")) {
+                        NorthSouth += 1;
+                    }
+                    EastWest += 1;
+                    break;
+                }
+                case "W": {
+                    if (new_heading.equals("S")) {
+                        NorthSouth -= 1;
+                    }
+                    else if (new_heading.equals("N")) {
+                        NorthSouth += 1;
+                    }
+                    EastWest -= 1;
                     break;
                 }
                 default: {
@@ -43,11 +87,11 @@ public class Cords {
         }
     }
 
-    public Integer GetNorthSouthCord(){
+    public Integer getNorthSouthCord(){
         int cord = NorthSouth;
         return cord;
     }
-    public Integer GetEastWestCord(){
+    public Integer getEastWestCord(){
         int cord = EastWest;
         return cord;
     }
