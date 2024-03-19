@@ -43,7 +43,7 @@ public class Cords {
             }
         }
         if (lastmove != null) {//tech debt
-            if (lastmove.getString("action").equals("heading") && lastmove == move) { // i cooked here so it may be burnt and a bit broken
+            if (lastmove.getString("action").equals("heading") && lastmove != move) { // i cooked here so it may be burnt and a bit broken
                 JSONObject direction = move.getJSONObject("parameters"); //if some error with heading or cords check here first
                 String headingChange = direction.getString("direction");
                 if (headingChange.equals("N") || headingChange.equals("S") || headingChange.equals("E") || headingChange.equals("W")) {
