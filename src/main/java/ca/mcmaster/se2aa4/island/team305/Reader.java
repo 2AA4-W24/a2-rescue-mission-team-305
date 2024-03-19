@@ -125,10 +125,10 @@ public class Reader implements ReaderInter{
     }
 
     private void creekCordStorage(String id) {
-        creekStorage.put(id, new int[]{Cords.GetEastWestCord(),Cords.GetNorthSouthCord()});
+        creekStorage.put(id, new int[]{Cords.getEastWestCord(),Cords.getNorthSouthCord()});
     }
     private void siteCordStorage(String id) {
-        siteStorage.put(id, new int[]{Cords.GetEastWestCord(),Cords.GetNorthSouthCord()});
+        siteStorage.put(id, new int[]{Cords.getEastWestCord(),Cords.getNorthSouthCord()});
     }
 
     public int[] getCreekCord(String id){
