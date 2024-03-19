@@ -37,11 +37,10 @@ public class Reader implements ReaderInter{
     private List<String> sites;
 
     private Cords Cords;
-    private Integer creekCounter;
+    public Integer creekCounter;
     private Integer siteCounter;
     Map<String, int[]> creekStorage = new HashMap<>();
     Map<String, int[]> siteStorage = new HashMap<>();
-
 
     @Override
     public void fileReader(JSONObject info, Boolean scan_status, String heading, DroneData data) {
@@ -132,12 +131,18 @@ public class Reader implements ReaderInter{
         siteStorage.put(id, new int[]{Cords.getEastWestCord(),Cords.getNorthSouthCord()});
     }
 
-    public int[] GetCreekCord(String id){
+    public int[] getCreekCord(String id){
         int[] cords = creekStorage.get(id);
         return cords;
     }
     public int[] GetSiteCord(String id){
         int[] cords = creekStorage.get(id);
         return cords;
+    }
+    public String getCreek0ID(){
+        return creeks.get(0);
+    }
+    public String getCreekXID(int num){
+        return creeks.get(num);
     }
 }

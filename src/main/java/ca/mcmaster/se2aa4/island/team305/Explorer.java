@@ -21,6 +21,7 @@ public class Explorer implements IExplorerRaid {
     private Cords droneCords;
     private String direction;
     private DroneData.Heading heading;
+    private JSONObject lastaction;
     @Override
     public void initialize(String s) {
         logger.info("** Initializing the Exploration Command Center");
@@ -40,13 +41,14 @@ public class Explorer implements IExplorerRaid {
 
     @Override
     public String takeDecision() {
-        control_center.determineAct(data, readerclass, droneCords);
+        control_center.determineAct(data, readerclass);
         JSONObject action = control_center.getDecision();
         if (control_center.didScan()) {
             scan_heading = control_center.getLastScan();
         }
-        droneCords.droneCordsMove(action, data.getHeading());
+        droneCords.droneCordsMove(action,direction,lastaction);
         logger.info("** Decision: {}", action.toString());
+        lastaction = action;
         return action.toString();
     }
 
@@ -68,7 +70,13 @@ public class Explorer implements IExplorerRaid {
     }
     @Override
     public String deliverFinalReport() {
+        String creek;
+        droneCords = new Cords();
+        creek = droneCords.ClosestCreekCalculation();
+        if (creek != null) {
+            logger.info("Creek found");
+            return creek;
+        }
         return "no creek found";
     }
-
 }
