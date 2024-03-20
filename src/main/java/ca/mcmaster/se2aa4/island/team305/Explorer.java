@@ -49,6 +49,9 @@ public class Explorer implements IExplorerRaid {
         droneCords.droneCordsMove(action,direction,lastaction);
         logger.info("** Decision: {}", action.toString());
         lastaction = action;
+        if (data.getBattery() < 40) {
+            action = action.put("action", "stop");
+        }
         return action.toString();
     }
 
