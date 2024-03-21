@@ -22,6 +22,7 @@ public class Explorer implements IExplorerRaid {
     private String direction;
     private DroneData.Heading heading;
     private JSONObject lastaction;
+    private BatteryMIA MIA;
     @Override
     public void initialize(String s) {
         logger.info("** Initializing the Exploration Command Center");
@@ -41,6 +42,7 @@ public class Explorer implements IExplorerRaid {
 
     @Override
     public String takeDecision() {
+        MIA = new BatteryMIA();
         control_center.determineAct(data,readerclass,droneCords);
         JSONObject action = control_center.getDecision();
         if (control_center.didScan()) {
@@ -49,6 +51,7 @@ public class Explorer implements IExplorerRaid {
         droneCords.droneCordsMove(action,direction,lastaction);
         logger.info("** Decision: {}", action.toString());
         lastaction = action;
+        action = MIA.batteryMIA(action);
         return action.toString();
     }
 
