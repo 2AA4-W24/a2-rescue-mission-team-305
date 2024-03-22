@@ -47,7 +47,7 @@ public class ReaderTest {
         reader.fileReader(info, true, "N", new DroneData("N", 1000));
         assertEquals(7, reader.getMoveCost());
         assertEquals(3, reader.getRange("N"));
-        assertEquals("Ground", reader.actionInfo());
+        assertEquals("Ground", reader.actionInfo("N"));
     }
 
     @Test
