@@ -98,7 +98,7 @@ public class Cords {
         }
         String currentcreek;
         double result;
-        for (int i = 0; i <= readerclass.creekCounter; i++){
+        for (int i = 0; i <= readerclass.getCreekSize(); i++){
             currentcreek = readerclass.getCreekXID(i);
             int[] currentcords = readerclass.getCreekCord(currentcreek);
             result = distanceCalculation(currentcords);
@@ -114,19 +114,7 @@ public class Cords {
         int y = Math.abs(currentcords[1]);
         return Math.sqrt(x*x+y*y);
     }
-    
-    public void setCords(int xcord, int ycord){//function used for testing 
-        EastWest = xcord;
-        NorthSouth = ycord;
-    }
 
-    public void setReaderClass(Reader readerClass) {
-        this.readerClass = readerClass;
-    }
-
-    public Reader getReaderClass() {
-        return readerClass;
-    }
 }
 
 

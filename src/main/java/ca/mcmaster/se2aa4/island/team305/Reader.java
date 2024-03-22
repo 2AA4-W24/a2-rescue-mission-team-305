@@ -40,10 +40,8 @@ public class Reader implements ReaderInter{
     private List<String> sites;
 
     private Cords Cords;
-    public Integer creekCounter;
-    private Integer siteCounter;
-    Map<String, int[]> creekStorage = new HashMap<>();
-    Map<String, int[]> siteStorage = new HashMap<>();
+    public Map<String, int[]> creekStorage;
+    public Map<String, int[]> siteStorage;
 
     @Override
     public void fileReader(JSONObject info, Boolean scan_status, String heading, DroneData data) {
@@ -98,8 +96,11 @@ public class Reader implements ReaderInter{
 
     @Override
     public void sitesCordsStart() {
-        creekCounter = 0;
-        siteCounter = 0;
+        creekStorage = new HashMap<>();
+        siteStorage = new HashMap<>();
+        biomes = new ArrayList<>();
+        creeks = new ArrayList<>();
+        sites = new ArrayList<>();
     }
 
     public Integer getRange(String heading) {
@@ -124,26 +125,57 @@ public class Reader implements ReaderInter{
 
     @Override
     public void processBiomes(JSONObject extras) {
-        if (biomes != null) {
-            biomes.clear(); //so we only have biomes of our current space
-        }
         try {
         JSONArray biomesInfo = extras.getJSONArray("biomes");
-        biomes = jsonArrayConvert(biomesInfo);} catch (Exception e) {
+        if (biomesInfo != null && biomesInfo.length() > 0) {
+            if (biomes == null) {
+                biomes = new ArrayList<>();
+            } else {
+                biomes.clear();
+            }
+            biomes.addAll(jsonArrayConvert(biomesInfo));}
+            logger.info(biomes);
+        } catch (Exception e) {
             logger.info("Biomes were skipped");
         }
         try {
-        JSONArray creeksInfo = extras.getJSONArray("creeks");
-        creeks.addAll(jsonArrayConvert(creeksInfo));
-        creekCordStorage(creeks.get(creekCounter));
-        creekCounter += 1;} catch (Exception e) {
+            JSONArray creeksInfo = extras.getJSONArray("creeks");
+            if (creeksInfo != null && creeksInfo.length() > 0) {
+                if (creeks == null) {
+                    creeks = new ArrayList<>();
+                }
+                List<String> listcreeks = jsonArrayConvert(creeksInfo);
+                int maxCreeks = Math.min(6, listcreeks.size());
+                for (int i = 0; i < maxCreeks; i++) {
+                    String creek = listcreeks.get(i);
+                    creeks.add(creek);
+                    int xCord = Cords.getEastWestCord();//idk why but giving errors when running test
+                    int yCord = Cords.getNorthSouthCord(); //idk why but giving errors when running test
+                    creekCordStorage(creek,xCord,yCord);
+                    logger.info("CREEKS ADDED");
+                }
+            }
+        } catch (Exception e) {
             logger.info("CREEK ID was skipped");
-        } try {
-        JSONArray sitesInfo = extras.getJSONArray("sites");
-        sites.addAll(jsonArrayConvert(sitesInfo));
-        siteCordStorage(sites.get(siteCounter));
-        siteCounter += 1; } catch (Exception e) {
-            logger.info("Site ID was skipped");
+        }
+        try {
+            JSONArray sitesInfo = extras.getJSONArray("sites");
+            if (sitesInfo != null && sitesInfo.length() > 0) {
+                if (sites == null) {
+                    sites = new ArrayList<>();
+                }
+                List<String> listSites = jsonArrayConvert(sitesInfo);
+                int maxSites = Math.min(2, listSites.size());
+                for (int i = 0; i < maxSites; i++) {
+                    String site = listSites.get(i);
+                    sites.add(site);
+                    int xCord = Cords.getEastWestCord(); //idk why but giving errors when running test
+                    int yCord = Cords.getNorthSouthCord(); //idk why but giving errors when running test
+                    siteCordStorage(site,xCord,yCord);
+                }
+            }
+        } catch (Exception e) {
+           logger.info("Site ID was skipped");
         }// try catch blocks can be tech debt and how it just easier doing it this way to save time
     }
     private List<String> jsonArrayConvert(JSONArray jsonArray){
@@ -154,19 +186,19 @@ public class Reader implements ReaderInter{
         return list;
     }
 
-    private void creekCordStorage(String id) {
-        creekStorage.put(id, new int[]{Cords.getEastWestCord(),Cords.getNorthSouthCord()});
+    public void creekCordStorage(String id, int xCord,int yCord) {//public for testing purposes
+        creekStorage.put(id, new int[]{xCord,yCord});
     }
-    private void siteCordStorage(String id) {
-        siteStorage.put(id, new int[]{Cords.getEastWestCord(),Cords.getNorthSouthCord()});
+    public void siteCordStorage(String id, int xCord,int yCord) {//public for testing purposes
+        siteStorage.put(id, new int[]{xCord,yCord});
     }
 
     public int[] getCreekCord(String id){
         int[] cords = creekStorage.get(id);
         return cords;
     }
-    public int[] GetSiteCord(String id){
-        int[] cords = creekStorage.get(id);
+    public int[] getSiteCord(String id){
+        int[] cords = siteStorage.get(id);
         return cords;
     }
     public String getCreek0ID(){
@@ -175,4 +207,12 @@ public class Reader implements ReaderInter{
     public String getCreekXID(int num){
         return creeks.get(num);
     }
+
+    public Integer getCreekSize(){
+        return creeks.size();
+    }
+    public Integer getSiteSize(){
+        return sites.size();
+    }
+
 }
