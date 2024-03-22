@@ -64,7 +64,8 @@ public class Explorer implements IExplorerRaid {
         JSONObject extraInfo = response.getJSONObject("extras");
         logger.info("Additional information received: {}", extraInfo);
         logger.info("Battery left: {}", data.getBattery());
-        if (control_center.checkBiome()) {//always false rn
+        logger.info("Current heading: {}", data.getHeading());
+        if (control_center.checkBiome()) {
             readerclass.processBiomes(extraInfo);
         }
     }

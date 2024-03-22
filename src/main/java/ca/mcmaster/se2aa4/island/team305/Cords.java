@@ -86,7 +86,7 @@ public class Cords {
                 }
             }
         }
-        if (lastmove != null) {//tech debt
+        /*if (lastmove != null) {//tech debt
             if (lastmove.getString("action").equals("heading") && lastmove != move) { // i cooked here so it may be burnt and a bit broken
                 JSONObject direction = move.getJSONObject("parameters"); //if some error with heading or cords check here first
                 String headingChange = direction.getString("direction");
@@ -118,7 +118,7 @@ public class Cords {
                     }
                 }
             }
-        }
+        } */
     }
     public Integer getNorthSouthCord() {
         int cord = NorthSouth;

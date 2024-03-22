@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.json.JSONObject;
 import org.apache.logging.log4j.Logger;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.Queue;
 
 public class Decision {
@@ -12,115 +13,166 @@ public class Decision {
     private final Logger logger = LogManager.getLogger();
     private String scan_heading;
     private Boolean radio_decision;
-    private Boolean biome_check; //always false rn
+    private Boolean biome_check;
     private Queue<JSONObject> action_queue = new LinkedList<>();
     private Phase step;
-    private Integer first_x;
-    private Integer second_x;
-    private Integer first_y;
-    private Integer second_y;
+    private Integer fly_count;
+    private Integer check;
+    private Boolean scan_turn_r;
 
     public Decision(Phase p) {
         step = p;
         action_queue.clear();
+        check = 0;
+        biome_check = false;
+        radio_decision = false;
+        scan_turn_r = false;
     }
 
     public enum Phase {
-        FIRST, SCAN_1_1, SCAN_1_2, TURN, SCAN_2_1, SCAN_2_2, LOCATE, SCAN, STOP, TEST
+        FIRST, TURN, RADIO, LOCATE, SCAN, SCAN_TURN, RADIO_2, LOCATE_2, SCAN_2, SCAN_TURN_2, TEST
     }
 
     public void determineAct(DroneData data, Reader scan, Cords cords) {
-        String island_side = "";
-        radio_decision = false;
-        biome_check = false; // this is always false right now, so you never check the current biome
-        if (scan.actionInfo() != null) {
-            switch (step) {
-                case SCAN_1_1 -> {
-                    if (scan.actionInfo().equals("GROUND")) {
-                        first_x = cords.getEastWestCord();
-                        island_side = scan_heading;
-                        step = Phase.SCAN_1_2;
+        if (scan_heading != null) {
+            if (scan.actionInfo(scan_heading) != null) {
+                if (step == Phase.FIRST) {
+                    if (scan.actionInfo(scan_heading).equals("GROUND")) {
                         action_queue.clear();
-                    }
-                }
-                case SCAN_1_2 -> {
-                    if (scan.actionInfo().equals("GROUND")) {
-                        second_x = cords.getEastWestCord();
-                    }
-                    else if (scan.actionInfo().equals("OUT_OF_RANGE")) {
-                        logger.info("Left bound x: {}", first_x);
-                        logger.info("Right bound x: {}", second_x);
                         step = Phase.TURN;
-                        action_queue.clear();
                     }
                 }
-                case SCAN_2_1 -> {
-                    if (scan.actionInfo().equals("GROUND")) {
-                        first_y = cords.getNorthSouthCord();
-                        island_side = scan_heading;
-                        step = Phase.SCAN_2_2;
-                        action_queue.clear();
+                if (step == Phase.RADIO_2) {
+                    if (radio_decision) {
+                        if (scan.actionInfo(scan_heading).equals("OUT_OF_RANGE")) {
+                            if (!scan_turn_r) {
+                                turn_l();
+                                move_f();
+                                turn_l();
+                                scan_turn_r = true;
+                            } else {
+                                turn_r();
+                                move_f();
+                                turn_r();
+                                scan_turn_r = false;
+                            }
+                            radio_f();
+                            fly_count = 0;
+                            step = Phase.LOCATE_2;
+                        }
                     }
                 }
-                case SCAN_2_2 -> {
-                    if (scan.actionInfo().equals("GROUND")) {
-                        second_y = cords.getNorthSouthCord();
+            }
+        }
+        if (biome_check) {
+            if (step == Phase.SCAN || step == Phase.SCAN_2) {
+                if (scan.biomes.contains("OCEAN")) {
+                    if (scan.biomes.size() == 1) {
+                        if (scan.actionInfo(scan_heading).equals("OUT_OF_RANGE")) {
+                            if (step == Phase.SCAN) {
+                                step = Phase.SCAN_TURN;
+                            }
+                            else {
+                                step = Phase.SCAN_TURN_2;
+                            }
+                        }
                     }
-                    else if (scan.actionInfo().equals("OUT_OF_RANGE")) {
-                        logger.info("Left bound x: {}", first_x);
-                        logger.info("Right bound x: {}", second_x);
-                        logger.info("Left bound y: {}", first_y);
-                        logger.info("Right bound y: {}", second_y);
-                        step = Phase.STOP;
-                        action_queue.clear();
+                    else {
+                        check = 0;
                     }
+                }
+                else {
+                    check = 0;
                 }
             }
         }
         if (action_queue.isEmpty()) {
             switch (step) {
                 case FIRST -> {
-                    radio_f();
-                    biome_scan();
-                    step = Phase.SCAN_1_1;
-                }
-                case SCAN_1_1, SCAN_2_1 -> {
                     radio_l();
                     radio_r();
-                    biome_scan();
-                    move_f();
-                }
-                case SCAN_1_2, SCAN_2_2 -> {
-                    if (island_side.equals(data.checkSide("L"))) {
-                        radio_l();
-                    }
-                    else {
-                        radio_r();
-                    }
-                    biome_scan();
                     move_f();
                 }
                 case TURN -> {
-                    biome_scan();
-                    if (island_side.equals(data.checkSide("L"))) {
+                    if (scan_heading.equals(data.checkSide("L"))) {
                         turn_l();
                     }
                     else {
                         turn_r();
                     }
-                    step = Phase.SCAN_2_1;
+                    step = Phase.RADIO;
                 }
-                case TEST -> {
-
+                case RADIO -> {
+                    radio_f();
+                    fly_count = 0;
+                    step = Phase.LOCATE;
                 }
-                case STOP -> {
-                    stop();
+                case LOCATE, LOCATE_2 -> {
+                    if (fly_count < scan.getRange(data.getHeading())) {
+                        move_f();
+                        fly_count++;
+                    }
+                    else {
+                        biome_scan();
+                        if (step == Phase.LOCATE) {
+                            step = Phase.SCAN;
+                        }
+                        else {
+                            step = Phase.SCAN_2;
+                        }
+                    }
+                }
+                case SCAN, SCAN_2 -> {
+                    radio_f();
+                    biome_scan();
+                    move_f();
+                }
+                case SCAN_TURN, SCAN_TURN_2 -> {
+                    if (check == 0) {
+                        if (!scan_turn_r) {
+                            turn_l();
+                            turn_l();
+                            scan_turn_r = true;
+                        } else {
+                            turn_r();
+                            turn_r();
+                            scan_turn_r = false;
+                        }
+                        if (step == Phase.SCAN_TURN) {
+                            step = Phase.SCAN;
+                        }
+                        else {
+                            step = Phase.SCAN_2;
+                        }
+                        check++;
+                    }
+                    else {
+                        if (step == Phase.SCAN_TURN_2) {
+                            action_queue.clear();
+                            stop();
+                        }
+                        else {
+                            scan_turn_r = !scan_turn_r;
+                            logger.info("#### going to radio 2");
+                            step = Phase.RADIO_2;
+                            biome_scan();
+                            check = 0;
+                        }
+                    }
+                }
+                case RADIO_2 -> {
+                    if (!scan_turn_r) {
+                        radio_l();
+                    }
+                    else {
+                        radio_r();
+                    }
+                    move_f();
                 }
             }
         }
         JSONObject action = action_queue.remove();
         if (action.getString("action").equals("echo")) {
-            radio_decision = true;
             String echo_direction = action.getJSONObject("parameters").getString("direction");
             action.getJSONObject("parameters").remove("direction");
             if (echo_direction.equals("F")) {
@@ -138,6 +190,8 @@ public class Decision {
             action.getJSONObject("parameters").put("direction", data.checkSide(turn));
             data.turn(data.checkSide(turn));
         }
+        radio_decision = action.getString("action").equals("echo");
+        biome_check = action.getString("action").equals("scan");
         next_decision = action;
     }
 
