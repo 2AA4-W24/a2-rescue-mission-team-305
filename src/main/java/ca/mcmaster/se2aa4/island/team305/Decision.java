@@ -153,7 +153,6 @@ public class Decision {
                         }
                         else {
                             scan_turn_r = !scan_turn_r;
-                            logger.info("#### going to radio 2");
                             step = Phase.RADIO_2;
                             biome_scan();
                             check = 0;
@@ -170,6 +169,10 @@ public class Decision {
                     move_f();
                 }
             }
+        }
+        if (data.getBattery() <= 40) {
+            action_queue.clear();
+            stop();
         }
         JSONObject action = action_queue.remove();
         if (action.getString("action").equals("echo")) {

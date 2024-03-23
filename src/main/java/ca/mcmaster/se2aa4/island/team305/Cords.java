@@ -7,14 +7,13 @@ public class Cords {
     private final Logger logger = LogManager.getLogger();
     private Integer NorthSouth;
     private Integer EastWest;
-    private Reader readerclass;
 
     public void droneCordsStart() { //using cartesian coordinates system (Tech debt as easy to do)
         NorthSouth = 0;
         EastWest = 0;
     }
 
-    public void droneCordsMove(JSONObject move, String currDirection, JSONObject lastmove) {
+    public void droneCordsMove(JSONObject move, String currDirection) {
         if (move.getString("action").equals("fly")) {
             switch (currDirection) {
                 case "N": {
@@ -86,39 +85,6 @@ public class Cords {
                 }
             }
         }
-        /*if (lastmove != null) {//tech debt
-            if (lastmove.getString("action").equals("heading") && lastmove != move) { // i cooked here so it may be burnt and a bit broken
-                JSONObject direction = move.getJSONObject("parameters"); //if some error with heading or cords check here first
-                String headingChange = direction.getString("direction");
-                if (headingChange.equals("N") || headingChange.equals("S") || headingChange.equals("E") || headingChange.equals("W")) {
-                    switch (currDirection + "-" + headingChange) {
-                        case "N-W", "W-N": {
-                            EastWest -= 1;
-                            NorthSouth += 1;
-                            break;
-                        }
-                        case "N-E", "E-N": {
-                            EastWest += 1;
-                            NorthSouth += 1;
-                            break;
-                        }
-                        case "S-W", "W-S": {
-                            EastWest -= 1;
-                            NorthSouth -= 1;
-                            break;
-                        }
-                        case "S-E", "E-S": {
-                            EastWest += 1;
-                            NorthSouth -= 1;
-                            break;
-                        }
-                        default: {
-                            logger.info("ERROR in drone cords HEADING move");
-                        }
-                    }
-                }
-            }
-        } */
     }
     public Integer getNorthSouthCord() {
         int cord = NorthSouth;
@@ -130,7 +96,7 @@ public class Cords {
         return cord;
     }
     private String closestCreek;
-    public String ClosestCreekCalculation() {
+    public String ClosestCreekCalculation(Reader readerclass) {
         double closestResult = 999999999.0; //to ensure first run of code overwrites this number
         try {
             closestCreek = readerclass.getCreek0ID();
@@ -139,10 +105,17 @@ public class Cords {
         }
         String currentcreek;
         double result;
-        for (int i = 0; i <= readerclass.creekCounter; i++){
+        String site = readerclass.getSiteID();
+        int[] site_cords = readerclass.GetSiteCord(site);
+        logger.info("site x:{}", site_cords[0]);
+        logger.info("site y:{}", site_cords[1]);
+        for (int i = 0; i < readerclass.creekCounter; i++){
             currentcreek = readerclass.getCreekXID(i);
             int[] currentcords = readerclass.getCreekCord(currentcreek);
-            result = distanceCalculation(currentcords);
+            logger.info("creek: {}", currentcreek);
+            logger.info("creek x:{}", site_cords[0]);
+            logger.info("creek y:{}", site_cords[1]);
+            result = distanceCalculation(currentcords, site_cords);
             if (result < closestResult) {
                 closestResult = result;
                 closestCreek = currentcreek;
@@ -150,10 +123,12 @@ public class Cords {
         }
         return closestCreek;
     }
-    private double distanceCalculation(int[] currentcords) {
-        int x = Math.abs(currentcords[0]);
-        int y = Math.abs(currentcords[1]);
-        return Math.sqrt(x*x+y*y);
+    private double distanceCalculation(int[] currentcords, int[] site_cord) {
+        int x1 = Math.abs(currentcords[0]);
+        int y1 = Math.abs(currentcords[1]);
+        int x2 = Math.abs(site_cord[0]);
+        int y2 = Math.abs(site_cord[1]);
+        return Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2));
     }
 }
 

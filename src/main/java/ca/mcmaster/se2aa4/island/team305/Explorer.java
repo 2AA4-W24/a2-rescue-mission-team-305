@@ -10,18 +10,14 @@ import ca.mcmaster.se2aa4.island.team305.Decision.Phase;
 public class Explorer implements IExplorerRaid {
 
     private final Logger logger = LogManager.getLogger();
-
     private Decision control_center;
-
     private DroneData data;
-
     private String scan_heading;
 
     private Reader readerclass;
     private Cords droneCords;
     private String direction;
-    private DroneData.Heading heading;
-    private JSONObject lastaction;
+    private String closest_creek;
     @Override
     public void initialize(String s) {
         logger.info("** Initializing the Exploration Command Center");
@@ -34,9 +30,9 @@ public class Explorer implements IExplorerRaid {
         control_center = new Decision(Phase.FIRST);
         data = new DroneData(direction, batteryLevel);
         readerclass = new Reader();
-        readerclass.sitesCordsStart();
         droneCords = new Cords();
         droneCords.droneCordsStart();
+        readerclass.sitesCordsStart(droneCords);
     }
 
     @Override
@@ -46,9 +42,19 @@ public class Explorer implements IExplorerRaid {
         if (control_center.didScan()) {
             scan_heading = control_center.getLastScan();
         }
-        droneCords.droneCordsMove(action,direction,lastaction);
+        droneCords.droneCordsMove(action,direction);
         logger.info("** Decision: {}", action.toString());
-        lastaction = action;
+        if (action.getString("action").equals("stop")) {
+            closest_creek = droneCords.ClosestCreekCalculation(readerclass);
+            if (closest_creek != null) {
+                logger.info("closest creek: {}", closest_creek);
+            }
+            else {
+                logger.info("creek not calculated");
+            }
+            logger.info("sites: {}", readerclass.sites);
+            logger.info("creeks: {}", readerclass.creeks);
+        }
         return action.toString();
     }
 
@@ -66,18 +72,18 @@ public class Explorer implements IExplorerRaid {
         logger.info("Battery left: {}", data.getBattery());
         logger.info("Current heading: {}", data.getHeading());
         if (control_center.checkBiome()) {
+            logger.info("processing biomes");
             readerclass.processBiomes(extraInfo);
         }
     }
     @Override
     public String deliverFinalReport() {
-        String creek;
-        droneCords = new Cords();
-        creek = droneCords.ClosestCreekCalculation();
-        if (creek != null) {
+        if (closest_creek != null) {
             logger.info("Creek found");
-            return creek;
+            logger.info("creek id: {}", closest_creek);
+            return closest_creek;
         }
+        logger.info("no creek available");
         return "no creek found";
     }
 }

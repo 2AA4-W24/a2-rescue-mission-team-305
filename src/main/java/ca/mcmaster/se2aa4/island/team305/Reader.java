@@ -1,5 +1,4 @@
 package ca.mcmaster.se2aa4.island.team305;
-import org.apache.logging.log4j.core.tools.picocli.CommandLine;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.apache.logging.log4j.LogManager;
@@ -14,7 +13,7 @@ interface ReaderInter{
     void fileReader(JSONObject info, Boolean scan_status, String heading, DroneData data);
     String actionInfo(String heading);
     Integer getMoveCost();
-    void sitesCordsStart();
+    void sitesCordsStart(Cords in_cords);
     void processBiomes(JSONObject extras);
 }
 public class Reader implements ReaderInter{
@@ -35,11 +34,11 @@ public class Reader implements ReaderInter{
 
     public List<String> biomes;
 
-    private List<String> creeks;
+    public List<String> creeks;
 
-    private List<String> sites;
+    public List<String> sites;
 
-    private Cords Cords;
+    private Cords cord;
     public Integer creekCounter;
     private Integer siteCounter;
     Map<String, int[]> creekStorage = new HashMap<>();
@@ -97,9 +96,10 @@ public class Reader implements ReaderInter{
     }
 
     @Override
-    public void sitesCordsStart() {
+    public void sitesCordsStart(Cords in_cords) {
         creekCounter = 0;
         siteCounter = 0;
+        cord = in_cords;
     }
 
     public Integer getRange(String heading) {
@@ -129,36 +129,55 @@ public class Reader implements ReaderInter{
         }
         try {
         JSONArray biomesInfo = extras.getJSONArray("biomes");
-        biomes = jsonArrayConvert(biomesInfo);} catch (Exception e) {
+        biomes = jsonArrayConvert(biomesInfo, 2);} catch (Exception e) {
             logger.info("Biomes were skipped");
         }
-        try {
         JSONArray creeksInfo = extras.getJSONArray("creeks");
-        creeks.addAll(jsonArrayConvert(creeksInfo));
-        creekCordStorage(creeks.get(creekCounter));
-        creekCounter += 1;} catch (Exception e) {
-            logger.info("CREEK ID was skipped");
-        } try {
+        if (!creeksInfo.isEmpty()) {
+            List<String> temp = jsonArrayConvert(creeksInfo, 0);
+            if (creeks == null) {
+                creeks = temp;
+            }
+            else {
+                creeks.addAll(temp);
+            }
+            creekCordStorage(creeks.get(creekCounter));
+        }
         JSONArray sitesInfo = extras.getJSONArray("sites");
-        sites.addAll(jsonArrayConvert(sitesInfo));
-        siteCordStorage(sites.get(siteCounter));
-        siteCounter += 1; } catch (Exception e) {
-            logger.info("Site ID was skipped");
-        }// try catch blocks can be tech debt and how it just easier doing it this way to save time
+        if (!sitesInfo.isEmpty()) {
+            List<String> temp2 = jsonArrayConvert(sitesInfo, 1);
+            if (sites == null) {
+                sites = temp2;
+            }
+            else {
+                sites.addAll(temp2);
+            }
+            siteCordStorage(sites.get(siteCounter));
+        }
     }
-    private List<String> jsonArrayConvert(JSONArray jsonArray){
+    private List<String> jsonArrayConvert(JSONArray jsonArray, Integer creek_status){
         List<String> list = new ArrayList<>();
         for (Object value : jsonArray){
             list.add(String.valueOf(value));
+            if (creek_status == 0) {
+                if (creeks != null) {
+                    creekCounter++;
+                }
+            }
+            else if (creek_status == 1) {
+                if (sites != null) {
+                    siteCounter++;
+                }
+            }
         }
         return list;
     }
 
     private void creekCordStorage(String id) {
-        creekStorage.put(id, new int[]{Cords.getEastWestCord(),Cords.getNorthSouthCord()});
+        creekStorage.put(id, new int[]{cord.getEastWestCord(), cord.getNorthSouthCord()});
     }
     private void siteCordStorage(String id) {
-        siteStorage.put(id, new int[]{Cords.getEastWestCord(),Cords.getNorthSouthCord()});
+        siteStorage.put(id, new int[]{cord.getEastWestCord(), cord.getNorthSouthCord()});
     }
 
     public int[] getCreekCord(String id){
@@ -166,7 +185,7 @@ public class Reader implements ReaderInter{
         return cords;
     }
     public int[] GetSiteCord(String id){
-        int[] cords = creekStorage.get(id);
+        int[] cords = siteStorage.get(id);
         return cords;
     }
     public String getCreek0ID(){
@@ -174,5 +193,9 @@ public class Reader implements ReaderInter{
     }
     public String getCreekXID(int num){
         return creeks.get(num);
+    }
+
+    public String getSiteID() {
+        return sites.get(0);
     }
 }
