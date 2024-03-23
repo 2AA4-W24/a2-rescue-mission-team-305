@@ -101,6 +101,7 @@ public class Reader implements ReaderInter{
         biomes = new ArrayList<>();
         creeks = new ArrayList<>();
         sites = new ArrayList<>();
+        Cords = new Cords();
     }
 
     public Integer getRange(String heading) {
@@ -140,22 +141,32 @@ public class Reader implements ReaderInter{
         }
         try {
             JSONArray creeksInfo = extras.getJSONArray("creeks");
+            logger.info("AAAAAAAAA");
             if (creeksInfo != null && creeksInfo.length() > 0) {
+                logger.info("BBBBBBBBB");
                 if (creeks == null) {
                     creeks = new ArrayList<>();
+                    logger.info("CCCCCCCCC");
                 }
                 List<String> listcreeks = jsonArrayConvert(creeksInfo);
+                logger.info("DDDDDDDDD");
                 int maxCreeks = Math.min(6, listcreeks.size());
+                logger.info("EEEEEEEEEEEEE");
                 for (int i = 0; i < maxCreeks; i++) {
                     String creek = listcreeks.get(i);
                     creeks.add(creek);
+                    logger.info("FOR LOOPPPPPPPP");
                     int xCord = Cords.getEastWestCord();//idk why but giving errors when running test
                     int yCord = Cords.getNorthSouthCord(); //idk why but giving errors when running test
+                    logger.info("FOR 22222222222");
                     creekCordStorage(creek,xCord,yCord);
                     logger.info("CREEKS ADDED");
                 }
+                logger.info("FFFFFFFFFFFF");
             }
+            logger.info("GGGGGGGGGGGGG");
         } catch (Exception e) {
+            logger.info(e);
             logger.info("CREEK ID was skipped");
         }
         try {
@@ -201,6 +212,11 @@ public class Reader implements ReaderInter{
         int[] cords = siteStorage.get(id);
         return cords;
     }
+    public int[] getSiteCord0(){
+        String i = sites.getFirst();
+        int[] cords = siteStorage.get(i);
+        return cords;
+    }
     public String getCreek0ID(){
         return creeks.get(0);
     }
@@ -214,5 +230,7 @@ public class Reader implements ReaderInter{
     public Integer getSiteSize(){
         return sites.size();
     }
+
+
 
 }

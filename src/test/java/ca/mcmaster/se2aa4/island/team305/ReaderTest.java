@@ -17,9 +17,11 @@ import org.json.JSONObject;
 public class ReaderTest {
     private Reader reader;
 
+    private Cords cords;
     @BeforeEach
     public void setUpReader() {
         reader = new Reader();
+        cords = new Cords();
     }
 
     @Test
@@ -47,7 +49,7 @@ public class ReaderTest {
         reader.fileReader(info, true, "N", new DroneData("N", 1000));
         assertEquals(7, reader.getMoveCost());
         assertEquals(3, reader.getRange("N"));
-        assertEquals("Ground", reader.actionInfo());
+        assertEquals("Ground", reader.actionInfo("N"));
     }
 
     @Test
@@ -65,6 +67,7 @@ public class ReaderTest {
     @Test
     void processBiomesCreeks() {
         JSONObject extras = new JSONObject().put("creeks", new JSONArray().put("creek1"));
+        cords.droneCordsStart();
         reader.sitesCordsStart();
         reader.processBiomes(extras);
         JSONObject moreExtras = new JSONObject().put("creeks", new JSONArray().put("creek2"));
@@ -79,6 +82,7 @@ public class ReaderTest {
     void processBiomesSites() {
         JSONObject extras = new JSONObject().put("sites", new JSONArray().put("site1"));
         reader.sitesCordsStart();
+        cords.droneCordsStart();
         reader.processBiomes(extras);
         JSONObject moreExtras = new JSONObject().put("sites", new JSONArray().put("site2"));
         reader.processBiomes(moreExtras);
@@ -87,6 +91,7 @@ public class ReaderTest {
     @Test
     void creekCordStorage() {
         reader.sitesCordsStart();
+        cords.droneCordsStart();
         String creekId = "creek1";
         int eastWestCord = 5;
         int northSouthCord = 25;
@@ -99,6 +104,7 @@ public class ReaderTest {
     @Test
     void testSiteCordStorage() {
         reader.sitesCordsStart();
+        cords.droneCordsStart();
         String siteId = "site1";
         int eastWestCord = 30;
         int northSouthCord = 40;

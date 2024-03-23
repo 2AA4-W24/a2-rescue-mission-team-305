@@ -8,7 +8,6 @@ public class Cords {
     private Integer NorthSouth;
     private Integer EastWest;
     private Reader readerclass;
-    private Reader readerClass;
 
     public void droneCordsStart() { //using cartesian coordinates system (Tech debt as easy to do)
         NorthSouth = 0;
@@ -80,13 +79,13 @@ public class Cords {
         }
     }
     public Integer getNorthSouthCord() {
-        int cord = NorthSouth;
-        return cord;
+        int Ncord = NorthSouth;
+        return Ncord;
     }
 
     public Integer getEastWestCord() {
-        int cord = EastWest;
-        return cord;
+        int Ecord = EastWest;//problem line
+       return Ecord;
     }
     private String closestCreek;
     public String ClosestCreekCalculation() {
@@ -110,9 +109,14 @@ public class Cords {
         return closestCreek;
     }
     private double distanceCalculation(int[] currentcords) {
-        int x = Math.abs(currentcords[0]);
-        int y = Math.abs(currentcords[1]);
-        return Math.sqrt(x*x+y*y);
+        int[] siteCords = readerclass.getSiteCord0();
+        int x2 = siteCords[0];
+        int y2 = siteCords[1];
+        int x1 = currentcords[0];
+        int y1 = currentcords[1];
+        double x = x2 - x1;
+        double y = y2 - y1;
+        return Math.sqrt((x*x)+(y*y));
     }
 
 }
