@@ -18,6 +18,9 @@ public class Explorer implements IExplorerRaid {
     private Cords droneCords;
     private String direction;
     private String closest_creek;
+    private DroneData.Heading heading;
+    private JSONObject lastaction;
+    private BatteryMIA MIA;
     @Override
     public void initialize(String s) {
         logger.info("** Initializing the Exploration Command Center");
@@ -37,6 +40,7 @@ public class Explorer implements IExplorerRaid {
 
     @Override
     public String takeDecision() {
+        MIA = new BatteryMIA();
         control_center.determineAct(data,readerclass,droneCords);
         JSONObject action = control_center.getDecision();
         if (control_center.didScan()) {
@@ -53,6 +57,10 @@ public class Explorer implements IExplorerRaid {
                 logger.info("creek not calculated");
             }
         }
+
+        lastaction = action;
+        action = MIA.batteryMIA(action);
+
         return action.toString();
     }
 

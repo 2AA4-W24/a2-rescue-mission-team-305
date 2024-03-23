@@ -36,6 +36,9 @@ public class Reader implements ReaderInter{
     public Map<String, int[]> creekStorage = new HashMap<>();
     public Map<String, int[]> siteStorage = new HashMap<>();
 
+    private Cords Cords;
+
+
     @Override
     public void fileReader(JSONObject info, Boolean scan_status, String heading, DroneData data) {
         moveCost = info.getInt("cost");
@@ -89,8 +92,11 @@ public class Reader implements ReaderInter{
 
     @Override
     public void sitesCordsStart() {
-        creekCounter = 0;
-        siteCounter = 0;
+        creekStorage = new HashMap<>();
+        siteStorage = new HashMap<>();
+        biomes = new ArrayList<>();
+        creeks = new ArrayList<>();
+        sites = new ArrayList<>();
     }
 
     public Integer getRange(String heading) {
@@ -145,6 +151,7 @@ public class Reader implements ReaderInter{
             }
             siteCordStorage(sites.get(siteCounter), cord);
         }
+
     }
     private List<String> jsonArrayConvert(JSONArray jsonArray, Integer creek_status){
         List<String> list = new ArrayList<>();
@@ -164,6 +171,7 @@ public class Reader implements ReaderInter{
         return list;
     }
 
+
     private void creekCordStorage(String id, Cords cord) {
         creekStorage.put(id, new int[]{cord.getEastWestCord(), cord.getNorthSouthCord()});
     }
@@ -175,7 +183,9 @@ public class Reader implements ReaderInter{
         int[] cords = creekStorage.get(id);
         return cords;
     }
+
     public int[] GetSiteCord(String id){
+
         int[] cords = siteStorage.get(id);
         return cords;
     }
@@ -186,7 +196,18 @@ public class Reader implements ReaderInter{
         return creeks.get(num);
     }
 
+
     public String getSiteID() {
         return sites.get(0);
     }
 }
+
+    public Integer getCreekSize(){
+        return creeks.size();
+    }
+    public Integer getSiteSize(){
+        return sites.size();
+    }
+
+}
+

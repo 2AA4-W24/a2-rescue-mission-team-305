@@ -9,6 +9,8 @@ public class Cords {
     private final Logger logger = LogManager.getLogger();
     private Integer NorthSouth;
     private Integer EastWest;
+    private Reader readerclass;
+    private Reader readerClass;
 
     public void droneCordsStart() { //using cartesian coordinates system (Tech debt as easy to do)
         NorthSouth = 0;
@@ -58,35 +60,72 @@ public class Cords {
                     }
                     else if (new_heading.equals("E")) {
                         EastWest += 1;
-                    }
-                    NorthSouth -= 1;
-                    break;
-                }
-                case "E": {
-                    if (new_heading.equals("S")) {
-                        NorthSouth -= 1;
-                    }
-                    else if (new_heading.equals("N")) {
+
+    public void droneCordsMove(JSONObject move, String currDirection, JSONObject lastmove) {
+        try {//tech debt
+            if (move.getString("action").equals("fly")) {
+                switch (currDirection) {
+                    case "N": {
                         NorthSouth += 1;
+                        break;
+
                     }
-                    EastWest += 1;
-                    break;
-                }
-                case "W": {
-                    if (new_heading.equals("S")) {
+                    case "S": {
                         NorthSouth -= 1;
+                        break;
                     }
-                    else if (new_heading.equals("N")) {
-                        NorthSouth += 1;
+                    case "E": {
+                        EastWest += 1;
+                        break;
                     }
-                    EastWest -= 1;
-                    break;
+                    case "W": {
+                        EastWest -= 1;
+                        break;
+                    }
+                    default: {
+                        logger.info("ERROR in drone cords move");
+                    }
                 }
-                default: {
-                    logger.info("ERROR in drone cords move");
+            }
+        } catch (Exception e) {
+            logger.info("Not fly");
+        }
+        if (lastmove != move) {  //tech debt
+            if (lastmove != null) {//tech debt
+                if (lastmove.getString("action").equals("heading")) { // i cooked here so it may be burnt and a bit broken
+                    JSONObject direction = move.getJSONObject("parameters"); //if some error with heading or cords check here first
+                    String headingChange = direction.getString("direction");
+                    if (headingChange.equals("N") || headingChange.equals("S") || headingChange.equals("E") || headingChange.equals("W")) {
+                        switch (currDirection + "-" + headingChange) {
+                            case "N-W", "W-N": {
+                                EastWest -= 1;
+                                NorthSouth += 1;
+                                break;
+                            }
+                            case "N-E", "E-N": {
+                                EastWest += 1;
+                                NorthSouth += 1;
+                                break;
+                            }
+                            case "S-W", "W-S": {
+                                EastWest -= 1;
+                                NorthSouth -= 1;
+                                break;
+                            }
+                            case "S-E", "E-S": {
+                                EastWest += 1;
+                                NorthSouth -= 1;
+                                break;
+                            }
+                            default: {
+                                logger.info("ERROR in drone cords HEADING move");
+                            }
+                        }
+                    }
                 }
             }
         }
+
     }
     public Integer getNorthSouthCord() {
         int cord = NorthSouth;
@@ -133,6 +172,7 @@ public class Cords {
         double y2 = site_cord[1];
         return Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2));
     }
+
 }
 
 

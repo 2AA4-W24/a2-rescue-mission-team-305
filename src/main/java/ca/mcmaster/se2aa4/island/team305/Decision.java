@@ -213,7 +213,7 @@ public class Decision {
     }
 
     public Boolean checkBiome() {
-        return biome_check;
+        return (biome_check = true);
     }
 
     private void move_f() {
