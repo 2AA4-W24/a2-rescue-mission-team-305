@@ -2,6 +2,8 @@ package ca.mcmaster.se2aa4.island.team305;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Cords {
     private final Logger logger = LogManager.getLogger();
@@ -109,13 +111,14 @@ public class Cords {
         int[] site_cords = readerclass.GetSiteCord(site);
         logger.info("site x:{}", site_cords[0]);
         logger.info("site y:{}", site_cords[1]);
-        for (int i = 0; i < readerclass.creekCounter; i++){
+        for (int i = 0; i <= readerclass.creekCounter; i++){
             currentcreek = readerclass.getCreekXID(i);
             int[] currentcords = readerclass.getCreekCord(currentcreek);
             logger.info("creek: {}", currentcreek);
-            logger.info("creek x:{}", site_cords[0]);
-            logger.info("creek y:{}", site_cords[1]);
+            logger.info("creek x:{}", currentcords[0]);
+            logger.info("creek y:{}", currentcords[1]);
             result = distanceCalculation(currentcords, site_cords);
+            logger.info("distance: {}", result);
             if (result < closestResult) {
                 closestResult = result;
                 closestCreek = currentcreek;
@@ -124,10 +127,10 @@ public class Cords {
         return closestCreek;
     }
     private double distanceCalculation(int[] currentcords, int[] site_cord) {
-        int x1 = Math.abs(currentcords[0]);
-        int y1 = Math.abs(currentcords[1]);
-        int x2 = Math.abs(site_cord[0]);
-        int y2 = Math.abs(site_cord[1]);
+        double x1 = currentcords[0];
+        double y1 = currentcords[1];
+        double x2 = site_cord[0];
+        double y2 = site_cord[1];
         return Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2));
     }
 }

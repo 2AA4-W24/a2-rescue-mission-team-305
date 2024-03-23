@@ -13,8 +13,8 @@ interface ReaderInter{
     void fileReader(JSONObject info, Boolean scan_status, String heading, DroneData data);
     String actionInfo(String heading);
     Integer getMoveCost();
-    void sitesCordsStart(Cords in_cords);
-    void processBiomes(JSONObject extras);
+    void sitesCordsStart();
+    void processBiomes(JSONObject extras, Cords cord);
 }
 public class Reader implements ReaderInter{
     private final Logger logger = LogManager.getLogger();
@@ -23,26 +23,18 @@ public class Reader implements ReaderInter{
     private String information_S;
     private String information_E;
     private Integer moveCost;
-
     private Integer range_N;
-
     private Integer range_W;
-
     private Integer range_S;
-
     private Integer range_E;
 
     public List<String> biomes;
-
     public List<String> creeks;
-
     public List<String> sites;
-
-    private Cords cord;
     public Integer creekCounter;
-    private Integer siteCounter;
-    Map<String, int[]> creekStorage = new HashMap<>();
-    Map<String, int[]> siteStorage = new HashMap<>();
+    public Integer siteCounter;
+    public Map<String, int[]> creekStorage = new HashMap<>();
+    public Map<String, int[]> siteStorage = new HashMap<>();
 
     @Override
     public void fileReader(JSONObject info, Boolean scan_status, String heading, DroneData data) {
@@ -96,10 +88,9 @@ public class Reader implements ReaderInter{
     }
 
     @Override
-    public void sitesCordsStart(Cords in_cords) {
+    public void sitesCordsStart() {
         creekCounter = 0;
         siteCounter = 0;
-        cord = in_cords;
     }
 
     public Integer getRange(String heading) {
@@ -123,7 +114,7 @@ public class Reader implements ReaderInter{
     }
 
     @Override
-    public void processBiomes(JSONObject extras) {
+    public void processBiomes(JSONObject extras, Cords cord) {
         if (biomes != null) {
             biomes.clear(); //so we only have biomes of our current space
         }
@@ -141,7 +132,7 @@ public class Reader implements ReaderInter{
             else {
                 creeks.addAll(temp);
             }
-            creekCordStorage(creeks.get(creekCounter));
+            creekCordStorage(creeks.get(creekCounter), cord);
         }
         JSONArray sitesInfo = extras.getJSONArray("sites");
         if (!sitesInfo.isEmpty()) {
@@ -152,7 +143,7 @@ public class Reader implements ReaderInter{
             else {
                 sites.addAll(temp2);
             }
-            siteCordStorage(sites.get(siteCounter));
+            siteCordStorage(sites.get(siteCounter), cord);
         }
     }
     private List<String> jsonArrayConvert(JSONArray jsonArray, Integer creek_status){
@@ -173,10 +164,10 @@ public class Reader implements ReaderInter{
         return list;
     }
 
-    private void creekCordStorage(String id) {
+    private void creekCordStorage(String id, Cords cord) {
         creekStorage.put(id, new int[]{cord.getEastWestCord(), cord.getNorthSouthCord()});
     }
-    private void siteCordStorage(String id) {
+    private void siteCordStorage(String id, Cords cord) {
         siteStorage.put(id, new int[]{cord.getEastWestCord(), cord.getNorthSouthCord()});
     }
 

@@ -32,7 +32,7 @@ public class Explorer implements IExplorerRaid {
         readerclass = new Reader();
         droneCords = new Cords();
         droneCords.droneCordsStart();
-        readerclass.sitesCordsStart(droneCords);
+        readerclass.sitesCordsStart();
     }
 
     @Override
@@ -52,8 +52,8 @@ public class Explorer implements IExplorerRaid {
             else {
                 logger.info("creek not calculated");
             }
-            logger.info("sites: {}", readerclass.sites);
-            logger.info("creeks: {}", readerclass.creeks);
+            logger.info("x: {}", droneCords.getEastWestCord());
+            logger.info("y: {}", droneCords.getNorthSouthCord());
         }
         return action.toString();
     }
@@ -73,7 +73,7 @@ public class Explorer implements IExplorerRaid {
         logger.info("Current heading: {}", data.getHeading());
         if (control_center.checkBiome()) {
             logger.info("processing biomes");
-            readerclass.processBiomes(extraInfo);
+            readerclass.processBiomes(extraInfo, droneCords);
         }
     }
     @Override
