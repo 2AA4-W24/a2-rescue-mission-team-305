@@ -42,7 +42,7 @@ public class Explorer implements IExplorerRaid {
         if (control_center.didScan()) {
             scan_heading = control_center.getLastScan();
         }
-        droneCords.droneCordsMove(action,direction);
+        droneCords.droneCordsMove(action,data.getHeading());
         logger.info("** Decision: {}", action.toString());
         if (action.getString("action").equals("stop")) {
             closest_creek = droneCords.ClosestCreekCalculation(readerclass);
@@ -52,8 +52,6 @@ public class Explorer implements IExplorerRaid {
             else {
                 logger.info("creek not calculated");
             }
-            logger.info("x: {}", droneCords.getEastWestCord());
-            logger.info("y: {}", droneCords.getNorthSouthCord());
         }
         return action.toString();
     }

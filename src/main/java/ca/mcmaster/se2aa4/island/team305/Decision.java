@@ -89,6 +89,7 @@ public class Decision {
         if (action_queue.isEmpty()) {
             switch (step) {
                 case FIRST -> {
+                    biome_scan();
                     radio_l();
                     radio_r();
                     move_f();
@@ -100,6 +101,7 @@ public class Decision {
                     else {
                         turn_r();
                     }
+                    biome_scan();
                     step = Phase.RADIO;
                 }
                 case RADIO -> {
