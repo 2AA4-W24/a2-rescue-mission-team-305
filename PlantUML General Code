@@ -1,0 +1,171 @@
+@startuml
+interface ReaderInter{
+        void fileReader(info: JSONObject,scan_status: Boolean,heading: String ,data: DroneData)
+        String actionInfo(heading: String )
+        Integer getRange(Heading: String )
+        Integer getMoveCost()
+    }
+
+    class Reader {
+        - information_N: String
+        - information_W: String
+        - information_S: String
+        - information_E: String
+        + moveCost: Integer
+        - range_N: Integer
+        - range_W: Integer
+        - range_S: Integer
+        - range_E: Integer
+        + ^fileReader(info: JSONObject, scan_status: Boolean ,heading: String ,data:  DroneData )
+        + ^actionInfo(String: Heading): String
+        + ^getMoveCost(): Integer
+        + ^getRange(String heading): Integer
+    }
+ class DroneData {
+        -Integer battery
+        -Heading direction
+        +DroneData(heading: String, initital_budget: Integer)
+        +batteryAction(cost: Integer)
+        +getBattery(): Integer
+        +turn(new_heading: String)
+        +checkSide(side: String): String
+        +getHeading(): String
+    }
+
+    enum Heading {
+        NORTH
+        SOUTH
+        EAST
+        WEST
+    }
+interface CoordinateTracking{
+void droneCordsStart()
+void droneCordsMove(move: JSONObject, currDirection: String)
+String ClosestCreekCalculation(mapInfo: MapInfo)
+Integer getEastWestCord()
+Integer getNorthSouthCord()
+}
+
+class Cords {
+    - NorthSouth: Integer
+    - EastWest: Integer
+    - readerclass: Reader
+    - closestCreeek: String
+    + ^droneCordsStart()
+    + ^droneCordsMove(move: JSONObject,currDirection:  String)
+    + ^getNorthSouthCord(): Integer
+    + ^getEastWestCord(): Integer
+    + ^ClosestCreekCalculation(mapInfo: MapInfo): String
+    - distanceCalculation(currentcords: int[], site_cord: int[]): double
+}
+
+class BatteryMIA {
+    + batteryCheck(data: DroneData, move: JSONObject): JSONObject
+}
+interface DecisionHub{
+void determineAct(data: DroneData, scan: Reader, mapInfo: MapInfo)
+JSONObject getDecision()
+}
+class Decision {
+    - next_decision: JSONObject
+    - scan_heading: String
+    - radio_decision: Boolean
+    - biome_check: Boolean
+    - action_queue: Queue<JSONObject>
+    - step: Phase
+    - fly_count: Integer
+    - scan_turn_r: Boolean
+    - turn_counter: Integer
+    + Decision(p: Phase)
+    + ^determineAct(data: DroneData,scan: Reader,mapInfo: MapInfo)
+    + getDecision(): JSONObject
+    + getLastScan(): String
+    + didScan(): Boolean
+    + checkBiome(): Boolean
+    - move_f()
+    - stop()
+    - radio_f()
+    - radio_r()
+    - radio_l()
+    - turn_r()
+    - turn_l()
+    - biome_scan()
+}
+
+enum Decision$Phase {
+    FIRST
+    TURN
+    RADIO
+    LOCATE
+    SCAN
+    SCAN_TURN
+    RADIO_2
+    LOCATE_2
+    SCAN_2
+    SCAN_TURN_2
+    TEST
+}
+class Explorer {
+    - control_center: Decision
+    - data: DroneData
+    - scan_heading: String
+    - readerclass: Reader
+    - droneCords: Cords
+    - direction: String
+    - closet_creek: String
+    - mapInfo: MapInfo
+    + ^initialize(s: String)
+    + ^takeDecision(): String
+    + ^acknowledgeResults(s: String)
+    + ^deliverFinalReport(): String
+}
+interface MapInfoInter {
+        getCreekCord(id: String): int[]
+        GetSiteCord(id: String): int[]
+        getCreek0ID(): String
+        getCreekXID(num: int): String
+        sitesCordsStart()
+        processBiomes(extras: JSONObject,cords: Cords)
+    }
+
+    class MapInfo {
+        + biomes: List<String>
+        + creeks: List<String>
+        + sites: List<String>
+        + creekCounter: Integer
+        + siteCounter: Integer
+        + creekStorage: Map<String, int[]>
+        + siteStorage: Map<String, int[]>
+        + ^processBiomes(extras: JSONObject,cords: Cords)
+        - jsonArrayConvert(jsonArray: JSONArray,creek_status: Integer): List<String>
+        - creekCordStorage(id: String,cord: Cords)
+        - siteCordStorage(od: String,cord: Cords)
+        + ^getCreekCord(id: String): int[]
+        + ^GetSiteCord(id: String): int[]
+        + ^getCreek0ID(): String
+        + ^getCreekXID(num: int): String
+        + ^getSiteID(): String
+        + ^sitesCordsStart()
+    }
+
+Decision ..|> DecisionHub
+Cords ..|> CoordinateTracking
+MapInfo ..|> MapInfoInter
+Reader ..|> ReaderInter
+DroneData *--> Heading
+
+Decision --> Reader
+Decision --> DroneData
+Decision --> Cords
+MapInfo -- Cords
+Explorer *--> MapInfo
+Explorer *--> Decision
+Explorer *--> DroneData
+Explorer *--> Reader
+Explorer *--> Cords
+Decision *--> Decision$Phase
+Decision *--> BatteryMIA
+
+Reader --> DroneData
+BatteryMIA --> DroneData
+@enduml

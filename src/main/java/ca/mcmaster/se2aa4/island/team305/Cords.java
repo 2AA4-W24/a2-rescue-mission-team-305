@@ -4,8 +4,9 @@ import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 
 interface CoordinateTracking {
+    void droneCordsStart();
     void droneCordsMove(JSONObject move, String currDirection);
-    String ClosestCreekCalculation(Reader readerclass);
+    String ClosestCreekCalculation(MapInfo mapInfo);
     Integer getEastWestCord();
     Integer getNorthSouthCord();
 }
@@ -15,12 +16,12 @@ public class Cords implements CoordinateTracking {
     private Integer NorthSouth; //y coordinate
     private Integer EastWest; //x coordinate
     private String closestCreek; //String id of closest creek from calculation
-
+    @Override
     public void droneCordsStart() { //using cartesian coordinates system
         NorthSouth = 0;
         EastWest = 0;
     }
-
+    @Override
     public void droneCordsMove(JSONObject move, String currDirection) {
         if (move.getString("action").equals("fly")) {
             switch (currDirection) {
@@ -94,19 +95,22 @@ public class Cords implements CoordinateTracking {
             }
         }
     }
+    @Override
     public Integer getNorthSouthCord() {
         int cord = NorthSouth;
         return cord;
     }
 
+    @Override
     public Integer getEastWestCord() {
         int cord = EastWest;
         return cord;
     }
-    public String ClosestCreekCalculation(Reader readerclass) {
+    @Override
+    public String ClosestCreekCalculation(MapInfo mapInfo) {
         double closestResult = 999999999.0; //to ensure first run of code overwrites this number
         try {
-            closestCreek = readerclass.getCreek0ID();
+            closestCreek = mapInfo.getCreek0ID();
             logger.info("closestcreek: {}", closestCreek);
         } catch (Exception e) {
             closestCreek = null;

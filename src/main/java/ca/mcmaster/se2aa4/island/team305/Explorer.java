@@ -18,6 +18,7 @@ public class Explorer implements IExplorerRaid {
     private Cords droneCords;
     private String direction;
     private String closest_creek;
+    private MapInfo mapInfo;
     @Override
     public void initialize(String s) {
         logger.info("** Initializing the Exploration Command Center");
@@ -32,13 +33,14 @@ public class Explorer implements IExplorerRaid {
         readerclass = new Reader();
         droneCords = new Cords();
         droneCords.droneCordsStart();
-        readerclass.sitesCordsStart();
+        mapInfo = new MapInfo();
+        mapInfo.sitesCordsStart();
     }
 
 
     @Override
     public String takeDecision() {
-        control_center.determineAct(data, readerclass);
+        control_center.determineAct(data, readerclass, mapInfo);
         JSONObject action = control_center.getDecision();
         if (control_center.didScan()) {
             scan_heading = control_center.getLastScan();
@@ -54,7 +56,7 @@ public class Explorer implements IExplorerRaid {
                 logger.info("x: {}", value[0]);
                 logger.info("y: {}", value[1]);
             }
-            closest_creek = droneCords.ClosestCreekCalculation(readerclass);
+            closest_creek = droneCords.ClosestCreekCalculation(mapInfo);
         }
         return action.toString();
     }
@@ -73,7 +75,7 @@ public class Explorer implements IExplorerRaid {
         logger.info("Battery left: {}", data.getBattery());
         logger.info("Current heading: {}", data.getHeading());
         if (control_center.checkBiome()) {
-            readerclass.processBiomes(extraInfo, droneCords);
+            mapInfo.processBiomes(extraInfo, droneCords);
         }
     }
     @Override

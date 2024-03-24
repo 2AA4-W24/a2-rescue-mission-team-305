@@ -1,15 +1,9 @@
 package ca.mcmaster.se2aa4.island.team305;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.json.JSONObject;
 
 public class DroneData {
-    private final Logger logger = LogManager.getLogger();
-
     public enum Heading {
         NORTH, SOUTH, EAST, WEST
     }
-
     private Integer battery; //Integer record of battery remaining for the mission (budget)
 
     private Heading direction; //Internal record of the drone's current heading
