@@ -47,6 +47,17 @@ public class Explorer implements IExplorerRaid {
         }
         droneCords.droneCordsMove(action,data.getHeading());
         logger.info("** Decision: {}", action.toString());
+        if (action.getString("action").equals("stop")) {
+            logger.info("sites: {}", readerclass.sites);
+            logger.info("creeks: {}", readerclass.creeks);
+            for (String creek: readerclass.creekStorage.keySet()) {
+                int[] value = readerclass.creekStorage.get(creek);
+                logger.info("creek: {}", creek);
+                logger.info("x: {}", value[0]);
+                logger.info("y: {}", value[1]);
+            }
+            closest_creek = droneCords.ClosestCreekCalculation(mapInfo);
+        }
         return action.toString();
     }
 
@@ -69,12 +80,12 @@ public class Explorer implements IExplorerRaid {
     }
     @Override
     public String deliverFinalReport() {
-        closest_creek = droneCords.ClosestCreekCalculation(mapInfo);
         if (closest_creek != null) {
             logger.info("Closest creek found");
             logger.info("Creek id is: {}", closest_creek);
             return closest_creek;
         }
+        logger.info("no creek found");
         return "No creek found";
     }
 }
