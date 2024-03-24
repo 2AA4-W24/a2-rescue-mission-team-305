@@ -1,13 +1,8 @@
 package ca.mcmaster.se2aa4.island.team305;
-import org.json.JSONArray;
+
 import org.json.JSONObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 interface ReaderInter{
     void fileReader(JSONObject info, Boolean scan_status, String heading, DroneData data);

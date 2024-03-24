@@ -18,6 +18,9 @@ interface MapInfoInter{
     String getCreek0ID();
 
     String getCreekXID(int num);
+
+    String getSiteID();
+
     void sitesCordsStart();
     void processBiomes(JSONObject extras, Cords cord);
 }
@@ -106,7 +109,7 @@ public class MapInfo implements MapInfoInter{
     public String getCreekXID(int num){
         return creeks.get(num);
     }
-
+    @Override
     public String getSiteID() {
         return sites.get(0);
     }

@@ -1,8 +1,6 @@
 package ca.mcmaster.se2aa4.island.team305;
 
-import org.apache.logging.log4j.LogManager;
 import org.json.JSONObject;
-import org.apache.logging.log4j.Logger;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -13,7 +11,6 @@ interface DecisionHub {
 public class Decision implements DecisionHub {
 
     private JSONObject next_decision; //JSONObject representation of next action to send to the island repository
-    private final Logger logger = LogManager.getLogger();
     private String scan_heading; //Heading of last radio scan
     private Boolean radio_decision; //Boolean indicating if the last action was a radio scan
     private Boolean biome_check; //Boolean indicating if the last action was a biome scan
