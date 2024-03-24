@@ -2,15 +2,21 @@ package ca.mcmaster.se2aa4.island.team305;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
-import java.util.HashMap;
-import java.util.Map;
 
-public class Cords {
+interface CoordinateTracking {
+    void droneCordsMove(JSONObject move, String currDirection);
+    String ClosestCreekCalculation(Reader readerclass);
+    Integer getEastWestCord();
+    Integer getNorthSouthCord();
+}
+
+public class Cords implements CoordinateTracking {
     private final Logger logger = LogManager.getLogger();
-    private Integer NorthSouth;
-    private Integer EastWest;
+    private Integer NorthSouth; //y coordinate
+    private Integer EastWest; //x coordinate
+    private String closestCreek; //String id of closest creek from calculation
 
-    public void droneCordsStart() { //using cartesian coordinates system (Tech debt as easy to do)
+    public void droneCordsStart() { //using cartesian coordinates system
         NorthSouth = 0;
         EastWest = 0;
     }
@@ -97,7 +103,6 @@ public class Cords {
         int cord = EastWest;
         return cord;
     }
-    private String closestCreek;
     public String ClosestCreekCalculation(Reader readerclass) {
         double closestResult = 999999999.0; //to ensure first run of code overwrites this number
         try {
@@ -109,16 +114,10 @@ public class Cords {
         double result;
         String site = readerclass.getSiteID();
         int[] site_cords = readerclass.GetSiteCord(site);
-        logger.info("site x:{}", site_cords[0]);
-        logger.info("site y:{}", site_cords[1]);
         for (int i = 0; i <= readerclass.creekCounter; i++){
             currentcreek = readerclass.getCreekXID(i);
             int[] currentcords = readerclass.getCreekCord(currentcreek);
-            logger.info("creek: {}", currentcreek);
-            logger.info("creek x:{}", currentcords[0]);
-            logger.info("creek y:{}", currentcords[1]);
             result = distanceCalculation(currentcords, site_cords);
-            logger.info("distance: {}", result);
             if (result < closestResult) {
                 closestResult = result;
                 closestCreek = currentcreek;

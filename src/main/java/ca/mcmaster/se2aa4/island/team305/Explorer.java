@@ -35,24 +35,16 @@ public class Explorer implements IExplorerRaid {
         readerclass.sitesCordsStart();
     }
 
+
     @Override
     public String takeDecision() {
-        control_center.determineAct(data,readerclass,droneCords);
+        control_center.determineAct(data, readerclass);
         JSONObject action = control_center.getDecision();
         if (control_center.didScan()) {
             scan_heading = control_center.getLastScan();
         }
         droneCords.droneCordsMove(action,data.getHeading());
         logger.info("** Decision: {}", action.toString());
-        if (action.getString("action").equals("stop")) {
-            closest_creek = droneCords.ClosestCreekCalculation(readerclass);
-            if (closest_creek != null) {
-                logger.info("closest creek: {}", closest_creek);
-            }
-            else {
-                logger.info("creek not calculated");
-            }
-        }
         return action.toString();
     }
 
@@ -70,18 +62,17 @@ public class Explorer implements IExplorerRaid {
         logger.info("Battery left: {}", data.getBattery());
         logger.info("Current heading: {}", data.getHeading());
         if (control_center.checkBiome()) {
-            logger.info("processing biomes");
             readerclass.processBiomes(extraInfo, droneCords);
         }
     }
     @Override
     public String deliverFinalReport() {
+        closest_creek = droneCords.ClosestCreekCalculation(readerclass);
         if (closest_creek != null) {
-            logger.info("Creek found");
-            logger.info("creek id: {}", closest_creek);
+            logger.info("Closest creek found");
+            logger.info("Creek id is: {}", closest_creek);
             return closest_creek;
         }
-        logger.info("no creek available");
-        return "no creek found";
+        return "No creek found";
     }
 }

@@ -10,9 +10,9 @@ public class DroneData {
         NORTH, SOUTH, EAST, WEST
     }
 
-    private Integer battery;
+    private Integer battery; //Integer record of battery remaining for the mission (budget)
 
-    private Heading direction;
+    private Heading direction; //Internal record of the drone's current heading
 
     public DroneData(String heading, Integer initial_budget) {
         switch (heading) {
@@ -37,23 +37,16 @@ public class DroneData {
     }
 
     public Integer getBattery() {
-        return battery;
+        Integer copy = battery;
+        return copy;
     }
 
     public void turn(String new_heading) {
         switch (new_heading) {
-            case "N":
-                direction = Heading.NORTH;
-                break;
-            case "W":
-                direction = Heading.WEST;
-                break;
-            case "S":
-                direction = Heading.SOUTH;
-                break;
-            case "E":
-                direction = Heading.EAST;
-                break;
+            case "N" -> direction = Heading.NORTH;
+            case "W" -> direction = Heading.WEST;
+            case "S" -> direction = Heading.SOUTH;
+            case "E" -> direction = Heading.EAST;
         }
     }
 
@@ -98,7 +91,7 @@ public class DroneData {
                 }
             }
         }
-        return null; //should throw error if direction is an improper value!! (technical debt)
+        return null;
     }
 
     public String getHeading() {
@@ -116,6 +109,6 @@ public class DroneData {
                 return "W";
             }
         }
-        return null; //should throw error if direction is an improper value!! (technical debt)
+        return null;
     }
 }

@@ -4,26 +4,30 @@ import org.apache.logging.log4j.LogManager;
 import org.json.JSONObject;
 import org.apache.logging.log4j.Logger;
 import java.util.LinkedList;
-import java.util.Objects;
 import java.util.Queue;
 
-public class Decision {
+interface DecisionHub {
+    void determineAct(DroneData data, Reader scan);
+    JSONObject getDecision();
+}
+public class Decision implements DecisionHub {
 
-    private JSONObject next_decision;
+    private JSONObject next_decision; //JSONObject representation of next action to send to the island repository
     private final Logger logger = LogManager.getLogger();
-    private String scan_heading;
-    private Boolean radio_decision;
-    private Boolean biome_check;
-    private Queue<JSONObject> action_queue = new LinkedList<>();
-    private Phase step;
-    private Integer fly_count;
-    private Integer check;
-    private Boolean scan_turn_r;
+    private String scan_heading; //Heading of last radio scan
+    private Boolean radio_decision; //Boolean indicating if the last action was a radio scan
+    private Boolean biome_check; //Boolean indicating if the last action was a biome scan
+    private Queue<JSONObject> action_queue = new LinkedList<>(); //Queue containing next actions
+    private Phase step; //Current phase of exploration
+    private Integer fly_count; //Number of spaces to fly to initially reach the island
+    private Integer turn_counter; /*Amount of times drone has done a complete turn in current phase,
+    must transition to next phase if above 0. */
+    private Boolean scan_turn_r; //Boolean representing which direction to turn next. If true, turn right next. Else, turn left.
 
     public Decision(Phase p) {
         step = p;
         action_queue.clear();
-        check = 0;
+        turn_counter = 0;
         biome_check = false;
         radio_decision = false;
         scan_turn_r = false;
@@ -33,7 +37,9 @@ public class Decision {
         FIRST, TURN, RADIO, LOCATE, SCAN, SCAN_TURN, RADIO_2, LOCATE_2, SCAN_2, SCAN_TURN_2, TEST
     }
 
-    public void determineAct(DroneData data, Reader scan, Cords cords) {
+    @Override
+    public void determineAct(DroneData data, Reader scan) {
+        BatteryMIA battery_checker = new BatteryMIA();
         if (scan_heading != null) {
             if (scan.actionInfo(scan_heading) != null) {
                 if (step == Phase.FIRST) {
@@ -78,18 +84,17 @@ public class Decision {
                         }
                     }
                     else {
-                        check = 0;
+                        turn_counter = 0;
                     }
                 }
                 else {
-                    check = 0;
+                    turn_counter = 0;
                 }
             }
         }
         if (action_queue.isEmpty()) {
             switch (step) {
                 case FIRST -> {
-                    biome_scan();
                     radio_l();
                     radio_r();
                     move_f();
@@ -101,7 +106,6 @@ public class Decision {
                     else {
                         turn_r();
                     }
-                    biome_scan();
                     step = Phase.RADIO;
                 }
                 case RADIO -> {
@@ -130,7 +134,7 @@ public class Decision {
                     move_f();
                 }
                 case SCAN_TURN, SCAN_TURN_2 -> {
-                    if (check == 0) {
+                    if (turn_counter == 0) {
                         if (!scan_turn_r) {
                             turn_l();
                             turn_l();
@@ -146,7 +150,7 @@ public class Decision {
                         else {
                             step = Phase.SCAN_2;
                         }
-                        check++;
+                        turn_counter++;
                     }
                     else {
                         if (step == Phase.SCAN_TURN_2) {
@@ -157,7 +161,7 @@ public class Decision {
                             scan_turn_r = !scan_turn_r;
                             step = Phase.RADIO_2;
                             biome_scan();
-                            check = 0;
+                            turn_counter = 0;
                         }
                     }
                 }
@@ -172,11 +176,8 @@ public class Decision {
                 }
             }
         }
-        if (data.getBattery() <= 40) {
-            action_queue.clear();
-            stop();
-        }
         JSONObject action = action_queue.remove();
+        action = battery_checker.batteryCheck(data, action);
         if (action.getString("action").equals("echo")) {
             String echo_direction = action.getJSONObject("parameters").getString("direction");
             action.getJSONObject("parameters").remove("direction");
@@ -201,19 +202,23 @@ public class Decision {
     }
 
     public JSONObject getDecision() {
-        return next_decision;
+        JSONObject copy = next_decision;
+        return copy;
     }
 
     public String getLastScan() {
-        return scan_heading;
+        String copy = scan_heading;
+        return copy;
     }
 
     public Boolean didScan() {
-        return radio_decision;
+        Boolean copy = radio_decision;
+        return copy;
     }
 
     public Boolean checkBiome() {
-        return biome_check;
+        Boolean copy = biome_check;
+        return copy;
     }
 
     private void move_f() {
