@@ -69,8 +69,8 @@ public class Decision implements DecisionHub {
         }
         if (biome_check) {
             if (step == Phase.SCAN || step == Phase.SCAN_2) {
-                if (mapInfo.biomes.contains("OCEAN")) {
-                    if (mapInfo.biomes.size() == 1) {
+                if (mapInfo.getBiomes().contains("OCEAN")) {
+                    if (mapInfo.getBiomes().size() == 1) {
                         if (scan.actionInfo(scan_heading).equals("OUT_OF_RANGE")) {
                             if (step == Phase.SCAN) {
                                 step = Phase.SCAN_TURN;
@@ -92,7 +92,6 @@ public class Decision implements DecisionHub {
         if (action_queue.isEmpty()) {
             switch (step) {
                 case FIRST -> {
-                    biome_scan();
                     radio_f();
                     radio_l();
                     radio_r();

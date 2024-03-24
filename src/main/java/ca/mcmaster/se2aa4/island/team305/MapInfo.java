@@ -26,13 +26,13 @@ interface MapInfoInter{
 }
 public class MapInfo implements MapInfoInter{
     private final Logger logger = LogManager.getLogger();
-    public List<String> biomes;
-    public List<String> creeks;
-    public List<String> sites;
-    public Integer creekCounter;
-    public Integer siteCounter;
-    public Map<String, int[]> creekStorage = new HashMap<>();
-    public Map<String, int[]> siteStorage = new HashMap<>();
+    private List<String> biomes;
+    private List<String> creeks;
+    private List<String> sites;
+    private Integer creekCounter;
+    private Integer siteCounter;
+    private Map<String, int[]> creekStorage = new HashMap<>();
+    private Map<String, int[]> siteStorage = new HashMap<>();
     @Override
     public void processBiomes(JSONObject extras, Cords cord) {
         if (biomes != null) {
@@ -41,7 +41,6 @@ public class MapInfo implements MapInfoInter{
         try {
             JSONArray biomesInfo = extras.getJSONArray("biomes");
             biomes = jsonArrayConvert(biomesInfo, 2);} catch (Exception e) {
-            logger.info("Biomes were skipped");
         }
         JSONArray creeksInfo = extras.getJSONArray("creeks");
         if (!creeksInfo.isEmpty()) {
@@ -101,6 +100,11 @@ public class MapInfo implements MapInfoInter{
         int[] cords = siteStorage.get(id);
         return cords;
     }
+
+    public Integer getCreekCount() {
+        Integer copy = creekCounter;
+        return copy;
+    }
     @Override
     public String getCreek0ID(){
         return creeks.get(0);
@@ -112,6 +116,29 @@ public class MapInfo implements MapInfoInter{
     @Override
     public String getSiteID() {
         return sites.get(0);
+    }
+
+    public List<String> getBiomes() {
+        List<String> copy = biomes;
+        return copy;
+    }
+
+    public List<String> getSites() {
+        List<String> copy = sites;
+        return copy;
+    }
+
+    public List<String> getCreeks() {
+        List<String> copy = creeks;
+        return copy;
+    }
+
+    public Boolean siteStatus() {
+        return sites != null;
+    }
+
+    public Boolean inCreeks(String id) {
+        return creekStorage.containsKey(id);
     }
 
     @Override

@@ -64,7 +64,7 @@ public class Reader implements ReaderInter{
                 return information_E;
             }
             default -> {
-                return null; //Should throw error if input is not expected!
+                return null;
             }
         }
     }
@@ -84,7 +84,7 @@ public class Reader implements ReaderInter{
                 return range_E;
             }
             default -> {
-                return 0; //Should throw error if input is not expected!
+                return 0;
             }
         }
     }
