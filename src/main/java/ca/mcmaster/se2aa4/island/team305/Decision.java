@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 interface DecisionHub {
-    void determineAct(DroneData data, Reader scan);
+    void determineAct(DroneData data, Reader scan, MapInfo mapInfo);
     JSONObject getDecision();
 }
 public class Decision implements DecisionHub {
@@ -38,7 +38,7 @@ public class Decision implements DecisionHub {
     }
 
     @Override
-    public void determineAct(DroneData data, Reader scan) {
+    public void determineAct(DroneData data, Reader scan, MapInfo mapInfo) {
         BatteryMIA battery_checker = new BatteryMIA();
         if (scan_heading != null) {
             if (scan.actionInfo(scan_heading) != null) {
@@ -72,8 +72,8 @@ public class Decision implements DecisionHub {
         }
         if (biome_check) {
             if (step == Phase.SCAN || step == Phase.SCAN_2) {
-                if (scan.biomes.contains("OCEAN")) {
-                    if (scan.biomes.size() == 1) {
+                if (mapInfo.biomes.contains("OCEAN")) {
+                    if (mapInfo.biomes.size() == 1) {
                         if (scan.actionInfo(scan_heading).equals("OUT_OF_RANGE")) {
                             if (step == Phase.SCAN) {
                                 step = Phase.SCAN_TURN;

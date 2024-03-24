@@ -5,7 +5,7 @@ import org.json.JSONObject;
 
 interface CoordinateTracking {
     void droneCordsMove(JSONObject move, String currDirection);
-    String ClosestCreekCalculation(Reader readerclass);
+    String ClosestCreekCalculation(MapInfo mapInfo);
     Integer getEastWestCord();
     Integer getNorthSouthCord();
 }
@@ -15,6 +15,7 @@ public class Cords implements CoordinateTracking {
     private Integer NorthSouth; //y coordinate
     private Integer EastWest; //x coordinate
     private String closestCreek; //String id of closest creek from calculation
+    private MapInfo mapInfo;
 
     public void droneCordsStart() { //using cartesian coordinates system
         NorthSouth = 0;
@@ -103,20 +104,20 @@ public class Cords implements CoordinateTracking {
         int cord = EastWest;
         return cord;
     }
-    public String ClosestCreekCalculation(Reader readerclass) {
+    public String ClosestCreekCalculation(MapInfo mapInfo) {
         double closestResult = 999999999.0; //to ensure first run of code overwrites this number
         try {
-            closestCreek = readerclass.getCreek0ID();
+            closestCreek = mapInfo.getCreek0ID();
         } catch (Exception e) {
             closestCreek = null;
         }
         String currentcreek;
         double result;
-        String site = readerclass.getSiteID();
-        int[] site_cords = readerclass.GetSiteCord(site);
-        for (int i = 0; i <= readerclass.creekCounter; i++){
-            currentcreek = readerclass.getCreekXID(i);
-            int[] currentcords = readerclass.getCreekCord(currentcreek);
+        String site = mapInfo.getSiteID();
+        int[] site_cords = mapInfo.GetSiteCord(site);
+        for (int i = 0; i <= mapInfo.creekCounter; i++){
+            currentcreek = mapInfo.getCreekXID(i);
+            int[] currentcords = mapInfo.getCreekCord(currentcreek);
             result = distanceCalculation(currentcords, site_cords);
             if (result < closestResult) {
                 closestResult = result;
