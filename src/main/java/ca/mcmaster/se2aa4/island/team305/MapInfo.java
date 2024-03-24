@@ -114,7 +114,6 @@ public class MapInfo implements MapInfoInter{
         return sites.get(0);
     }
 
-
     @Override
     public void sitesCordsStart() {
         creekCounter = 0;
