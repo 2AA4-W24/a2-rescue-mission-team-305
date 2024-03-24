@@ -9,21 +9,6 @@ import java.util.Queue;
 interface DecisionHub {
     void determineAct(DroneData data, Reader scan, MapInfo mapInfo);
     JSONObject getDecision();
-    void move_f();
-
-    void stop();
-
-    void radio_f();
-
-    void radio_r();
-
-    void radio_l();
-
-    void turn_r();
-
-    void turn_l();
-
-    void biome_scan();
 }
 public class Decision implements DecisionHub {
 
@@ -235,55 +220,55 @@ public class Decision implements DecisionHub {
         Boolean copy = biome_check;
         return copy;
     }
-    @Override
-    public void move_f() {
+
+    private void move_f() {
         JSONObject move = new JSONObject();
         move.put("action", "fly");
         action_queue.add(move);
     }
-    @Override
-    public void stop() {
+
+    private void stop() {
         JSONObject move = new JSONObject();
         move.put("action", "stop");
         action_queue.add(move);
     }
-    @Override
-    public void radio_f() {
+
+    private void radio_f() {
         JSONObject move = new JSONObject();
         move.put("action", "echo");
         move.put("parameters", new JSONObject().put("direction", "F"));
         action_queue.add(move);
     }
-    @Override
-    public void radio_r() {
+
+    private void radio_r() {
         JSONObject move = new JSONObject();
         move.put("action", "echo");
         move.put("parameters", new JSONObject().put("direction", "R"));
         action_queue.add(move);
     }
-    @Override
-    public void radio_l() {
+
+    private void radio_l() {
         JSONObject move = new JSONObject();
         move.put("action", "echo");
         move.put("parameters", new JSONObject().put("direction", "L"));
         action_queue.add(move);
     }
-    @Override
-    public void turn_r() {
+
+    private void turn_r() {
         JSONObject move = new JSONObject();
         move.put("action", "heading");
         move.put("parameters", new JSONObject().put("direction", "R"));
         action_queue.add(move);
     }
-    @Override
-    public void turn_l() {
+
+    private void turn_l() {
         JSONObject move = new JSONObject();
         move.put("action", "heading");
         move.put("parameters", new JSONObject().put("direction", "L"));
         action_queue.add(move);
     }
-    @Override
-    public void biome_scan() {
+
+    private void biome_scan() {
         JSONObject move = new JSONObject();
         move.put("action", "scan");
         action_queue.add(move);
