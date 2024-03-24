@@ -1,0 +1,67 @@
+@startuml
+interface CoordinateTracking{
+void droneCordsStart()
+void droneCordsMove(move: JSONObject, currDirection: String)
+String ClosestCreekCalculation(mapInfo: MapInfo)
+Integer getEastWestCord()
+Integer getNorthSouthCord()
+}
+
+class Cords {
+    - NorthSouth: Integer
+    - EastWest: Integer
+    - readerclass: Reader
+    - closestCreeek: String
+    + ^droneCordsStart()
+    + ^droneCordsMove(move: JSONObject,currDirection:  String)
+    + ^getNorthSouthCord(): Integer
+    + ^getEastWestCord(): Integer
+    + ^ClosestCreekCalculation(mapInfo: MapInfo): String
+    - distanceCalculation(currentcords: int[], site_cord: int[]): double
+}
+
+class Explorer {
+    - droneCords: Cords
+    - closet_creek: String
+    - mapInfo: MapInfo
+    + ^initialize(s: String)
+    + ^takeDecision(): String
+    + ^acknowledgeResults(s: String)
+    + ^deliverFinalReport(): String
+}
+interface MapInfoInter {
+        getCreekCord(id: String): int[]
+        GetSiteCord(id: String): int[]
+        getCreek0ID(): String
+        getCreekXID(num: int): String
+        sitesCordsStart()
+        processBiomes(extras: JSONObject,cords: Cords)
+    }
+
+    class MapInfo {
+        + biomes: List<String>
+        + creeks: List<String>
+        + sites: List<String>
+        + creekCounter: Integer
+        + siteCounter: Integer
+        + creekStorage: Map<String, int[]>
+        + siteStorage: Map<String, int[]>
+        + ^processBiomes(extras: JSONObject,cords: Cords)
+        - jsonArrayConvert(jsonArray: JSONArray,creek_status: Integer): List<String>
+        - creekCordStorage(id: String,cord: Cords)
+        - siteCordStorage(od: String,cord: Cords)
+        + ^getCreekCord(id: String): int[]
+        + ^GetSiteCord(id: String): int[]
+        + ^getCreek0ID(): String
+        + ^getCreekXID(num: int): String
+        + ^getSiteID(): String
+        + ^sitesCordsStart()
+    }
+
+Cords ..|> CoordinateTracking
+MapInfo ..|> MapInfoInter
+MapInfo -- Cords
+Explorer *--> MapInfo
+Explorer *--> Cords
+
+@enduml
