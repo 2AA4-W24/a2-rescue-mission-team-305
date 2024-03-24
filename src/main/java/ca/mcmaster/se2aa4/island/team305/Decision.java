@@ -95,6 +95,8 @@ public class Decision implements DecisionHub {
         if (action_queue.isEmpty()) {
             switch (step) {
                 case FIRST -> {
+                    biome_scan();
+                    radio_f();
                     radio_l();
                     radio_r();
                     move_f();
@@ -103,8 +105,11 @@ public class Decision implements DecisionHub {
                     if (scan_heading.equals(data.checkSide("L"))) {
                         turn_l();
                     }
-                    else {
+                    else if (scan_heading.equals(data.checkSide("R"))) {
                         turn_r();
+                    }
+                    else {
+                        move_f();
                     }
                     step = Phase.RADIO;
                 }

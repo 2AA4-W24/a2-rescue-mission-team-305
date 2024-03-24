@@ -107,20 +107,33 @@ public class Cords implements CoordinateTracking {
         double closestResult = 999999999.0; //to ensure first run of code overwrites this number
         try {
             closestCreek = readerclass.getCreek0ID();
+            logger.info("closestcreek: {}", closestCreek);
         } catch (Exception e) {
             closestCreek = null;
         }
         String currentcreek;
         double result;
-        String site = readerclass.getSiteID();
-        int[] site_cords = readerclass.GetSiteCord(site);
-        for (int i = 0; i <= readerclass.creekCounter; i++){
-            currentcreek = readerclass.getCreekXID(i);
-            int[] currentcords = readerclass.getCreekCord(currentcreek);
-            result = distanceCalculation(currentcords, site_cords);
-            if (result < closestResult) {
-                closestResult = result;
-                closestCreek = currentcreek;
+        if (readerclass.sites != null) {
+            String site = readerclass.getSiteID();
+            logger.info("site: {}", site);
+            int[] site_cords = readerclass.GetSiteCord(site);
+            logger.info("site x: {}", site_cords[0]);
+            logger.info("site y: {}", site_cords[1]);
+            logger.info("creek counter: {}", readerclass.creekCounter);
+            for (int i = 0; i <= readerclass.creekCounter; i++) {
+                currentcreek = readerclass.getCreekXID(i);
+                logger.info("currentcreek: {}", currentcreek);
+                if (readerclass.creekStorage.containsKey(currentcreek)) {
+                    int[] currentcords = readerclass.getCreekCord(currentcreek);
+                    logger.info("creek x: {}", currentcords[0]);
+                    logger.info("creek y: {}", currentcords[1]);
+                    result = distanceCalculation(currentcords, site_cords);
+                    logger.info("calc finished");
+                    if (result < closestResult) {
+                        closestResult = result;
+                        closestCreek = currentcreek;
+                    }
+                }
             }
         }
         return closestCreek;
