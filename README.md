@@ -4,7 +4,6 @@
 - Authors:
   - [Andreas Sideris](macid@mcmaster.ca) 
   - [David Olejniczak](macid@mcmaster.ca)
-  - [Firstname_3, Lastname_3](macid@mcmaster.ca)
 
 ## Product Description
 
