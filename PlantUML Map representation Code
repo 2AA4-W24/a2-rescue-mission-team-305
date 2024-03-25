@@ -1,4 +1,5 @@
 @startuml
+
 interface CoordinateTracking{
 void droneCordsStart()
 void droneCordsMove(move: JSONObject, currDirection: String)
@@ -20,15 +21,7 @@ class Cords {
     - distanceCalculation(currentcords: int[], site_cord: int[]): double
 }
 
-class Explorer {
-    - droneCords: Cords
-    - closet_creek: String
-    - mapInfo: MapInfo
-    + ^initialize(s: String)
-    + ^takeDecision(): String
-    + ^acknowledgeResults(s: String)
-    + ^deliverFinalReport(): String
-}
+
 interface MapInfoInter {
         getCreekCord(id: String): int[]
         GetSiteCord(id: String): int[]
@@ -39,13 +32,13 @@ interface MapInfoInter {
     }
 
     class MapInfo {
-        + biomes: List<String>
-        + creeks: List<String>
-        + sites: List<String>
-        + creekCounter: Integer
-        + siteCounter: Integer
-        + creekStorage: Map<String, int[]>
-        + siteStorage: Map<String, int[]>
+        - biomes: List<String>
+        - creeks: List<String>
+        - sites: List<String>
+        - creekCounter: Integer
+        - siteCounter: Integer
+        - creekStorage: Map<String, int[]>
+        - siteStorage: Map<String, int[]>
         + ^processBiomes(extras: JSONObject,cords: Cords)
         - jsonArrayConvert(jsonArray: JSONArray,creek_status: Integer): List<String>
         - creekCordStorage(id: String,cord: Cords)
@@ -56,12 +49,54 @@ interface MapInfoInter {
         + ^getCreekXID(num: int): String
         + ^getSiteID(): String
         + ^sitesCordsStart()
+        + getCreekCount(): Integer
+        + getBiomes(): List<String>
+        + getSites(): List<String>
+        + getCreeks(): List<String>
+        + siteStatus(): Boolean
+        + inCreeks(id: String): Boolean
     }
+interface islandFactory {
+void initialize(direction: String, battery_level: Integer)
+JSONObject getAction()
+void readResults(response: JSONObject)
+String getReport()
+}
+class MissionFactory{
+    - control_center: Decision
+    - data: DroneData
+    - scan_heading: String
+    - readerclass: Reader
+    - droneCords: Cords
+    - mapInfo: MapInfo
+    - action: JSONObject
+    - results: MissionResults
+    + ^initialize(direction: String, battery_level: Integer)
+    + findAction()
+    + ^getAction(): JSONObject
+    + ^readResults(response: JSONObject)
+    + getReport(): String
+}
+
+class Explorer {
+    - factory: MissionFactory
+    + ^initialize(s: String)
+    + ^takeDecision(): String
+    + ^acknowledgeResults(s: String)
+    + ^deliverFinalReport(): String
+}
+class MissionResults {
+     + getResults(dronecords: Cords, map_info: MapInfo): String
+}
 
 Cords ..|> CoordinateTracking
 MapInfo ..|> MapInfoInter
+islandFactory ..|> MissionFactory
+Explorer *--> MissionFactory
+MissionResults --> Cords
+MissionFactory *--> MissionResults
+MissionFactory *--> Cords
+MissionFactory *--> MapInfo
 MapInfo -- Cords
-Explorer *--> MapInfo
-Explorer *--> Cords
 
 @enduml
